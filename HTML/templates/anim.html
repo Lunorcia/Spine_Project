@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Generator</title>
+    <style>
+        .container {
+            display: flex;
+        }
+        .form-container {
+            flex: 1;
+        }
+        .image-container {
+            flex: 1;
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script>
+        const templates = {
+            "Only scale": ["Sym_bomp_01", "Sym_bomp_02", "Sym_Tip_01"],
+            "Scale & rotate": ["Sym_Cascading_01", "Sym_bomp_03", "Sym_bomp_06", "Sym_bomp_07"],
+            "Scale & translate": ["Sym_Cascading_02", "Sym_bomp_04", "Sym_bomp_05"]
+        };
+
+        function UpdateSecondDropdown() {
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            const templateSelect = document.getElementById("templateSelect");
+            const selectedType = animationTypeSelect.value;
+            
+            // Clear the second dropdown
+            templateSelect.innerHTML = "";
+            
+            // Populate the second dropdown based on the selected type
+            templates[selectedType].forEach(template => {
+                const option = document.createElement("option");
+                option.value = template;
+                option.text = template;
+                templateSelect.appendChild(option);
+            });
+        }
+        // Initialize the second dropdown when the page loads
+        window.onload = function() {
+            UpdateSecondDropdown();
+        };
+    </script>
+</head>
+<body>
+    <h1>Animation Generator</h1>
+    <div class="container">
+        <div class="form-container">
+            <form id="animationForm" action="/upload" method="post" enctype="multipart/form-data">
+                <label for="imageUpload">上傳圖片：</label>
+                <input type="file" id="imageUpload" name="image" accept="image/*" required><br><br>
+
+                <label for="letterSelect">選擇字母：</label>
+                <select id="letterSelect" name="letter" required>
+                    <option value="A">A</option>
+                    <option value="K">K</option>
+                    <option value="Q">Q</option>
+                    <option value="J">J</option>
+                </select><br><br>
+
+                <label for="animationTypeSelect">選擇動畫類型：</label>
+                <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
+                    <option value="Only scale">Only scale</option>
+                    <option value="Scale & rotate">Scale & rotate</option>
+                    <option value="Scale & translate">Scale & translate</option>
+                </select><br><br>
+
+                <label for="templateSelect">選擇動畫模板：</label>
+                <select id="templateSelect" name="template" required>
+                    <!-- This will be populated based on the first dropdown -->
+                </select><br><br>
+
+                <input type="submit" value="生成動畫">
+            </form><br>
+        </div>
+        <div class="image-container">
+            <h2>Uploaded Image</h2>
+            <img id="animationImage" src="{{url_for('static',filename=image_web_url)}}" alt="Uploaded Image">
+
+            <h2>Animation GIF</h2>
+            <img id="animationGIF" src="{{url_for('static',filename=gif_web_url)}}" alt="Generated Animation">
+        </div>
+    </div>
+</body>
+</html>

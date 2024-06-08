@@ -1,0 +1,139 @@
+{
+    "skeleton": {
+        "hash": "s8rnC5z43RO",
+        "spine": "4.2.20",
+        "images": "c:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\Saved",
+        "audio": ""
+    },
+    "bones": [
+        {
+            "name": "root"
+        },
+        {
+            "name": "All",
+            "parent": "root"
+        },
+        {
+            "name": "MainSYM",
+            "parent": "All"
+        },
+        {
+            "name": "Down",
+            "parent": "MainSYM",
+            "y": -71.39
+        },
+        {
+            "name": "Middle",
+            "parent": "Down",
+            "y": 71.39
+        },
+        {
+            "name": "M1",
+            "parent": "Middle"
+        }
+    ],
+    "slots": [
+        {
+            "name": "sym",
+            "bone": "M1",
+            "attachment": "10e.png"
+        }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "sym": {
+                    "10e.png": {
+                        "width": 125,
+                        "height": 125
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "Sym_Tip_01": {
+            "bones": {
+                "Down": {
+                    "scale": [
+                        {
+                            "time": 0.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": [
+                                0.036,
+                                1,
+                                0.061,
+                                1.05,
+                                0.036,
+                                1,
+                                0.061,
+                                0.95
+                            ]
+                        },
+                        {
+                            "time": 0.1,
+                            "x": 1.05,
+                            "y": 0.95,
+                            "curve": [
+                                0.161,
+                                1.05,
+                                0.202,
+                                0.95,
+                                0.161,
+                                0.95,
+                                0.202,
+                                1.05
+                            ]
+                        },
+                        {
+                            "time": 0.2667,
+                            "x": 0.95,
+                            "y": 1.05,
+                            "curve": [
+                                0.315,
+                                0.95,
+                                0.348,
+                                1.03,
+                                0.315,
+                                1.05,
+                                0.348,
+                                0.98
+                            ]
+                        },
+                        {
+                            "time": 0.4,
+                            "x": 1.03,
+                            "y": 0.98,
+                            "curve": [
+                                0.436,
+                                1.03,
+                                0.461,
+                                1,
+                                0.436,
+                                0.98,
+                                0.461,
+                                1
+                            ]
+                        },
+                        {
+                            "time": 0.5,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": "stepped"
+                        },
+                        {
+                            "time": 0.6667,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": []
+                        }
+                    ],
+                    "rotate": [],
+                    "translate": []
+                }
+            }
+        }
+    }
+}

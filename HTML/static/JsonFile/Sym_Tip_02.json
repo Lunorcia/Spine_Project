@@ -1,0 +1,60 @@
+{
+    "skeleton": {
+        "hash": "s8rnC5z43RO",
+        "spine": "4.2.20",
+        "images": "c:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\Saved",
+        "audio": ""
+    },
+    "bones": [
+        {
+            "name": "root"
+        },
+        {
+            "name": "All",
+            "parent": "root"
+        },
+        {
+            "name": "MainSYM",
+            "parent": "All"
+        },
+        {
+            "name": "Down",
+            "parent": "MainSYM",
+            "y": -71.39
+        },
+        {
+            "name": "Middle",
+            "parent": "Down",
+            "y": 71.39
+        },
+        {
+            "name": "M1",
+            "parent": "Middle"
+        }
+    ],
+    "slots": [
+        {
+            "name": "sym",
+            "bone": "M1",
+            "attachment": "10e.png"
+        }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "sym": {
+                    "10e.png": {
+                        "width": 125,
+                        "height": 125
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "Sym_Tip_02": {
+            "bones": {}
+        }
+    }
+}

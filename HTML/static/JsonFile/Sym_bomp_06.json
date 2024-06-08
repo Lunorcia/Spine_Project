@@ -1,0 +1,154 @@
+{
+    "skeleton": {
+        "hash": "s8rnC5z43RO",
+        "spine": "4.2.20",
+        "images": "c:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\Saved",
+        "audio": ""
+    },
+    "bones": [
+        {
+            "name": "root"
+        },
+        {
+            "name": "All",
+            "parent": "root"
+        },
+        {
+            "name": "MainSYM",
+            "parent": "All"
+        },
+        {
+            "name": "Down",
+            "parent": "MainSYM",
+            "y": -71.39
+        },
+        {
+            "name": "Middle",
+            "parent": "Down",
+            "y": 71.39
+        },
+        {
+            "name": "M1",
+            "parent": "Middle"
+        }
+    ],
+    "slots": [
+        {
+            "name": "sym",
+            "bone": "M1",
+            "attachment": "10e.png"
+        }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "sym": {
+                    "10e.png": {
+                        "width": 125,
+                        "height": 125
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "Sym_bomp_06": {
+            "bones": {
+                "Middle": {
+                    "scale": [
+                        {
+                            "time": 0.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": [
+                                0.052,
+                                1,
+                                0.107,
+                                0.968,
+                                0.052,
+                                1,
+                                0.107,
+                                0.968
+                            ]
+                        },
+                        {
+                            "time": 0.1667,
+                            "x": 0.91,
+                            "y": 0.91,
+                            "curve": [
+                                0.25,
+                                0.91,
+                                0.417,
+                                1.367,
+                                0.25,
+                                0.91,
+                                0.417,
+                                1.367
+                            ]
+                        },
+                        {
+                            "time": 0.5,
+                            "x": 1.367,
+                            "y": 1.367,
+                            "curve": [
+                                0.875,
+                                1.367,
+                                1.625,
+                                1,
+                                0.875,
+                                1.367,
+                                1.625,
+                                1
+                            ]
+                        },
+                        {
+                            "time": 2.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": []
+                        }
+                    ],
+                    "rotate": [
+                        {
+                            "time": 0.1667,
+                            "value": 0.0,
+                            "curve": [
+                                0.248,
+                                5.95,
+                                0.379,
+                                15
+                            ]
+                        },
+                        {
+                            "time": 0.5,
+                            "value": 15.0,
+                            "curve": [
+                                0.708,
+                                15,
+                                1.125,
+                                -15
+                            ]
+                        },
+                        {
+                            "time": 1.3333,
+                            "value": -15.0,
+                            "curve": [
+                                1.491,
+                                -15,
+                                1.828,
+                                0
+                            ]
+                        },
+                        {
+                            "time": 2.0,
+                            "value": 0.0,
+                            "curve": []
+                        }
+                    ],
+                    "translate": []
+                }
+            }
+        }
+    }
+}
