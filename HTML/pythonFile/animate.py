@@ -5,12 +5,15 @@ import weight
 import pythonFile.json_stringify as json_stringify
 
 FRAME_T = 30  # spine設定 30幀為1秒
-folder_path = ""
-file_name = ""
+img_folder_path = ""
+img_file_name = ""
+jsonPath = ""
 jData = 0
 
 
 animationList = {}  # ["animation_name"] = Animation
+bonesList = []  # [{b1}, {b2}, ...]
+slotsList = []
 
 """
 架構
@@ -28,6 +31,20 @@ class AniBone:  # bone底下有哪些動畫曲線
         self.rotateList = rList  # list of ScaleData
         self.scaleList = sList  # list of RotateData
         self.transList = tList  # list of TransData
+
+
+class Bone:
+    def __init__(self, name, parent="", x=0.0, y=0.0):
+        self.name = name
+        self.parent = parent
+        self.x = x
+        self.y = y
+
+
+class Slot:
+    def __init__(self, name, bone, attachment=""):
+        self.name = name
+        self.bone = bone
 
 
 class Animation:
@@ -101,8 +118,14 @@ class TransData:
 
 
 def SetImgPath(img_path):
-    global folder_path, file_name
-    folder_path, file_name = os.path.split(img_path)
+    global img_folder_path, img_file_name
+    img_folder_path, img_file_name = os.path.split(img_path)
+
+
+def SetJsonFile(jPaht):
+    global jsonPath
+    # 改成傳入絕對路徑
+    jsonPath = jPaht
 
 
 def Parse():
@@ -112,6 +135,10 @@ def Parse():
         if mainKey == "animations":
             for aKey, aValue in mainValue.items():
                 ParseAnimations(aKey, aValue)
+        elif mainKey == "bones":
+            ParseBones(mainValue)  # blist[]
+        elif mainKey == "slots":
+            ParseSlots(mainValue)
 
 
 def ParseAnimations(aniName, animation):
@@ -128,6 +155,48 @@ def ParseAnimations(aniName, animation):
                     ParseCurve(bKey, bValue, newAnimation)
             case _:  # default
                 continue
+
+
+def ParseBones(bList):
+    global bonesList
+    bonesList = []
+    for bInfo in bList:  # bones[{b1}, {b2},...]
+        name = ""
+        parent = ""
+        x = 0.0
+        y = 0.0
+        for bKey, bValue in bInfo.items():  # {bone info}
+            match bKey:
+                case "name":
+                    name = bValue
+                case "parent":
+                    parent = bValue
+                case "x":
+                    x = bValue
+                case "y":
+                    y = bValue
+                case _:  # default
+                    continue
+        b = Bone(name, parent, x, y)
+        bonesList.append(b)
+
+
+def ParseSlots(sList):
+    global slotsList
+    slotsList = []
+    for sInfo in sList:
+        name = ""
+        bone = ""
+        for sKey, sValue in sInfo.items():
+            match sKey:
+                case "name":
+                    name = sValue
+                case "bone":
+                    bone = sValue
+                case _:  # default
+                    continue
+        s = Slot(name, bone)
+        slotsList.append(s)
 
 
 def ParseCurve(boneName, animation, newAnimation):
@@ -251,12 +320,15 @@ def ParseTranslate(tList, newAnimation):
 
 def main():
     print("animate main")
-    jsonFile = open("C:/Users/cyivs/OneDrive/Desktop/VSCode/json/wfx_Symbol.json", "r")
+    jsonFile = open(jsonPath, "r")
     global jData
     jData = json.load(jsonFile)
     Parse()
     print("animate parse complete")
-    json_stringify.OutputJson(animationList, folder_path, file_name)
+
+    json_stringify.OutputJson(
+        bonesList, slotsList, animationList, img_folder_path, img_file_name, jsonPath
+    )
     print("json output complete")
 
     # for key, ani in animationList.items():

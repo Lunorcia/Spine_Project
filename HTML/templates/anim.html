@@ -21,13 +21,10 @@
         }
     </style>
     <script>
-        const templates = {
-            "Only scale": ["Sym_bomp_01", "Sym_bomp_02", "Sym_Tip_01"],
-            "Scale & rotate": ["Sym_Cascading_01", "Sym_bomp_03", "Sym_bomp_06", "Sym_bomp_07"],
-            "Scale & translate": ["Sym_Cascading_02", "Sym_bomp_04", "Sym_bomp_05"]
-        };
+        const templates = {{ templates | tojson }};
 
-        function UpdateSecondDropdown() {
+        function UpdateSecondDropdown() 
+        {
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             const templateSelect = document.getElementById("templateSelect");
             const selectedType = animationTypeSelect.value;
@@ -36,15 +33,16 @@
             templateSelect.innerHTML = "";
             
             // Populate the second dropdown based on the selected type
-            templates[selectedType].forEach(template => {
+            for (const [templateName, templateFile] of Object.entries(templates[selectedType])) {
                 const option = document.createElement("option");
-                option.value = template;
-                option.text = template;
+                option.value = templateName;
+                option.text = templateName;
                 templateSelect.appendChild(option);
-            });
+            }
         }
         // Initialize the second dropdown when the page loads
-        window.onload = function() {
+        window.onload = function() 
+        {
             UpdateSecondDropdown();
         };
     </script>
@@ -53,6 +51,9 @@
     <h1>Animation Generator</h1>
     <div class="container">
         <div class="form-container">
+            
+            <button onclick="location.href='/add_template_page'">新增模板</button>
+
             <form id="animationForm" action="/upload" method="post" enctype="multipart/form-data">
                 <label for="imageUpload">上傳圖片：</label>
                 <input type="file" id="imageUpload" name="image" accept="image/*" required><br><br>
@@ -67,9 +68,9 @@
 
                 <label for="animationTypeSelect">選擇動畫類型：</label>
                 <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
-                    <option value="Only scale">Only scale</option>
-                    <option value="Scale & rotate">Scale & rotate</option>
-                    <option value="Scale & translate">Scale & translate</option>
+                    {% for type in templates.keys() %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
                 </select><br><br>
 
                 <label for="templateSelect">選擇動畫模板：</label>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增模板</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            width: 50%;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+
+        const templates = {{ templates | tojson }};
+        const existingTypes = Object.keys(templates);
+
+        function toggleNewTypeInput() 
+        {
+            const newTypeCheckbox = document.getElementById("newTypeCheckbox");
+            const newTypeInput = document.getElementById("newTypeInput");
+            const existingTypeSelect = document.getElementById("existingTypeSelect");
+            const templateNameInput = document.getElementById("newTemplateName");
+
+            if (newTypeCheckbox.checked) 
+            {
+                newTypeInput.style.display = "block";
+                existingTypeSelect.disabled = true;
+                templateNameInput.oninput = checkNewTemplateName;
+            } 
+            else 
+            {
+                newTypeInput.style.display = "none";
+                existingTypeSelect.disabled = false;
+                templateNameInput.oninput = checkExistingTemplateName;
+            }
+        }
+
+        function checkTypeName()
+        {
+            const newTypeName = document.getElementById("newTemplateType").value;
+            const submitButton = document.getElementById("submitButton");
+            const typeMessage = document.getElementById("typeMessage");
+            if (existingTypes.includes(newTypeName)) 
+            {
+                typeMessage.innerText = "這個動畫類型名稱已經存在，請重新命名或選擇既有動畫類型。\n";
+                submitButton.disabled = true;
+            } 
+            else 
+            {
+                typeMessage.innerText = "";
+                submitButton.disabled = false;
+            }
+        }
+
+        function checkNewTemplateName()
+        {
+            const newTypeName = document.getElementById("newTemplateType").value;
+            const templateName = document.getElementById("newTemplateName").value;
+            const submitButton = document.getElementById("submitButton");
+            const templateMessage = document.getElementById("templateMessage");
+            //template name in new type won't be repeated
+            templateMessage.innerText = "";
+            submitButton.disabled = false;
+        }
+
+        function checkExistingTemplateName()
+        {
+            const existingType = document.getElementById("existingTypeSelect").value;
+            const templateName = document.getElementById("newTemplateName").value;
+            const submitButton = document.getElementById("submitButton");
+            const templateMessage = document.getElementById("templateMessage");
+
+            if (templates[existingType] && templates[existingType][templateName])
+            {
+                templateMessage.innerText = "這個模板名稱在當前動畫類型中已經存在，請選擇其他名稱。\n";
+                submitButton.disabled = true;
+            }
+            else
+            {
+                templateMessage.innerText = "";
+                submitButton.disabled = false;
+            }
+        }
+
+
+    </script>
+</head>
+<body>
+    <h1>新增模板</h1>
+    <div class="container">
+        <div class="form-container">
+            <form id="addTemplateForm" action="/add_template" method="post" enctype="multipart/form-data">
+                
+                <label for="existingTypeSelect">選擇現有動畫類型：</label>
+                <select id="existingTypeSelect" name="existingType" onchange="checkExistingTemplateName()">
+                    {% for type in templates.keys() %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <input type="checkbox" id="newTypeCheckbox" name="newTypeCheckbox" onclick="toggleNewTypeInput()">
+                <label for="newTypeCheckbox">新增動畫類型</label><br><br>
+
+                <div id="newTypeInput" class="hidden">
+                    <label for="newTemplateType">新動畫類型名稱：</label>
+                    <input type="text" id="newTemplateType" name="newTemplateType" oninput="checkTypeName(); checkNewTemplateName();"><br><br>
+                    <span id="typeMessage" style="color: red;"></span>
+                </div>
+
+                <label for="newTemplateName">模板名稱：</label>
+                <input type="text" id="newTemplateName" name="newTemplateName" required oninput="checkExistingTemplateName(); checkNewTemplateName();"><br><br>
+                <span id="templateMessage" style="color: red;"></span>
+
+                <label for="newTemplateFile">上傳模板文件 (.json)：</label>
+                <input type="file" id="newTemplateFile" name="newTemplateFile" accept=".json" required><br><br>
+
+                <input type="submit" value="確認新增">
+            </form><br>
+        </div>
+    </div>
+</body>
+</html>
