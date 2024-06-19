@@ -1,9 +1,0 @@
-{
-"skeleton": { "hash": "CV9M9JQiNY4", "spine": "4.2.20", "images": "", "audio": "" },
-"bones": [
-	{ "name": "root" }
-],
-"animations": {
-	"animation": {}
-}
-}
