@@ -1,7 +1,7 @@
 # import numpy
 import json
 import os
-import weight
+import pythonFile.weight as weight
 import pythonFile.json_stringify as json_stringify
 
 FRAME_T = 30  # spine設定 30幀為1秒
