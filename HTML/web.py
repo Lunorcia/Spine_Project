@@ -14,15 +14,18 @@ import pythonFile.mesh as mesh
 import pythonFile.animate as animate
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
-# src = -absolute path-\HTML
+# src = (absolute path)\HTML
 # location of img file which user upload
 UPLOAD_IMG_FOLDER = os.path.join(SRC_PATH, "static", "Image", "Saved")
-GIF_BUTTON_IMG_PATH = (
-    "C:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\gif_button.png"
+
+GIF_BUTTON_IMG_PATH = os.path.join(SRC_PATH, "static", "Image", "gif_button.png")
+GIF_BUTTON_IMG_SE_PATH = os.path.join(
+    SRC_PATH, "static", "Image", "gif_button_selected.png"
 )
-GIF_BUTTON_IMG_SE_PATH = "C:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\gif_button_selected.png"
+
 JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "JsonFile")
 UPLOADED_JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "UploadedJson")
+
 SPINE_PROGRAM = "Spine.com"
 SPINE_EXE = "Spine.exe"
 
@@ -134,7 +137,11 @@ def upload():
                 tz=datetime.timezone(datetime.timedelta(hours=8))
             )
             timeslot = now.strftime("%Y%m%d%H%M%S")  # yyyymmddhhmmss
-            spine_file_path = "E:/testSpine/output" + timeslot + ".spine"
+            spine_file_path = os.path.join(SRC_PATH, "spine")
+            output_spine_name = "output" + timeslot + ".spine"
+            spine_file_path = os.path.join(spine_file_path, output_spine_name)
+
+            # spine_file_path = "E:/testSpine/output" + timeslot + ".spine"
 
             subprocess.run(
                 [
@@ -158,7 +165,7 @@ def upload():
             print("Spine launched successfully.")
             time.sleep(10)
 
-            retries = 10
+            retries = 5
             while retries > 0:
                 windows = gw.getWindowsWithTitle("Spine - output")
                 if windows:
@@ -166,13 +173,14 @@ def upload():
                         spine_window = windows[0]
                         spine_window.activate()
                         time.sleep(0.5)
-                        spine_window.maximize()
-                        time.sleep(0.5)
+                        # spine_window.maximize()
+                        # time.sleep(0.5)
                         pyautogui.hotkey("ctrl", "e")
                         ChangeLanguageEng()
                         pyautogui.click(x=327, y=422)
                         time.sleep(1)
                         # click GIF button
+                        gif_button_location = None
                         try:
                             gif_button_location = pyautogui.locateOnScreen(
                                 GIF_BUTTON_IMG_PATH
@@ -185,29 +193,39 @@ def upload():
                                 )
                                 time.sleep(0.5)
                                 pyautogui.click(gif_button_location)
-                                time.sleep(1)
                                 pyautogui.click(gif_button_location)
                                 time.sleep(0.5)
                             else:
-                                print("Try to find GIF radio button.")
+                                print(
+                                    "GIF radio button not found, trying alternate image."
+                                )
+                        except Exception as e:
+                            print(f"Failed to find GIF button with first image: {e}")
+
+                        if gif_button_location is None:
+                            try:
                                 gif_button_location = pyautogui.locateOnScreen(
                                     GIF_BUTTON_IMG_SE_PATH
                                 )
+                                time.sleep(0.5)
                                 if gif_button_location is not None:
                                     print(" GIF radio button_SE found.")
                                     gif_button_location = pyautogui.center(
                                         gif_button_location
                                     )
-                                    time.sleep(1)
-                                    pyautogui.click(gif_button_location)
                                     time.sleep(0.5)
                                     pyautogui.click(gif_button_location)
+                                    pyautogui.click(gif_button_location)
+                                    time.sleep(0.5)
 
                                 else:
                                     print("Alternate GIF radio button not found.")
                                     raise Exception("GIF radio button not found")
-                        except Exception as e:
-                            print(f"Failed to find GIF button: {e}")
+                            except Exception as e:
+                                print(
+                                    f"Failed to find GIF button with second image: {e}"
+                                )
+
                         # Press Tab key to switch to the textbox
                         pyautogui.press("tab")
                         time.sleep(0.5)
@@ -227,7 +245,7 @@ def upload():
                         print(f"Failed to activate Spine window: {e}")
                         time.sleep(1)
                 retries -= 1
-                print(f"Retrying... ({10 - retries}/10)")
+                print(f"Retrying... ({5 - retries}/5)")
             if retries == 0:
                 print("Failed to activate Spine window after multiple retries.")
 

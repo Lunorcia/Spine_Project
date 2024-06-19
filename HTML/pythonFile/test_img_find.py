@@ -2,9 +2,7 @@ import pyautogui
 import time
 
 # Path to the gif_radio_button.png image
-GIF_BUTTON_IMG_PATH = (
-    "C:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\gif_button.png"
-)
+GIF_BUTTON_IMG_PATH = "C:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\gif_button_selected.png"
 
 # Give some time to manually open the window and ensure it is visible
 print("You have 5 seconds to bring the window with the GIF button to the front.")

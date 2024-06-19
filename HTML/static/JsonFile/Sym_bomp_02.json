@@ -1,6 +1,6 @@
 {
     "skeleton": {
-        "hash": "bLju1jmbtVC",
+        "hash": "vybOhR3BPXP",
         "spine": "4.2.20",
         "images": "c:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\Saved",
         "audio": ""
@@ -82,72 +82,72 @@
         {
             "name": "sym",
             "bone": "M5-M8",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym2",
             "bone": "M1",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym3",
             "bone": "M2",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym4",
             "bone": "M3",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym5",
             "bone": "M4",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym6",
             "bone": "Scatter",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym7",
             "bone": "Wild",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH",
             "bone": "M5-M8",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH2",
             "bone": "M1",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH3",
             "bone": "M2",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH4",
             "bone": "M3",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH5",
             "bone": "M4",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH6",
             "bone": "Scatter",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH7",
             "bone": "Wild",
-            "attachment": "Je.png"
+            "attachment": "10e.png"
         }
     ],
     "skins": [
@@ -155,9 +155,9 @@
             "name": "default",
             "attachments": {
                 "sym": {
-                    "Je.png": {
-                        "width": 115,
-                        "height": 115
+                    "10e.png": {
+                        "width": 125,
+                        "height": 125
                     }
                 }
             }
