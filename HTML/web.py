@@ -3,6 +3,7 @@ import pathlib
 import sys
 import os
 import requests
+import mimetypes
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -90,10 +91,16 @@ def upload():
         with open(saved_json_path, "rb") as json_file, open(
             saved_img_path, "rb"
         ) as img_file:
+            json_filename = os.path.basename(saved_json_path)
+            img_filename = os.path.basename(saved_img_path)
             print("Before send request.\n")
+            img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                "https://8938-219-70-173-170.ngrok-free.app/process",
-                files={"json_file": json_file, "image_file": img_file},
+                "https://cd45-219-70-173-170.ngrok-free.app/process",
+                files={
+                    "json_file": (json_filename, json_file, "application/json"),
+                    "image_file": (img_filename, img_file, img_mime_type),
+                },
             )
 
             if response.status_code == 200:
@@ -109,7 +116,7 @@ def upload():
                     templates=TEMPLATE_MAPPING,
                 )
             else:
-                print("Request error.\n")
+                print("Request failed.\n")
                 return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500

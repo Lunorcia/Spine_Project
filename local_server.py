@@ -15,10 +15,10 @@ UPLOAD_IMG_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "Image", "Saved"
 JSON_FILE_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "JsonFile")
 
 GIF_BUTTON_IMG_PATH = os.path.join(
-    CURRENT_DIR, "HTML", "spine", "Image", "gif_button.png"
+    CURRENT_DIR, "HTML", "static", "Image", "gif_button.png"
 )
 GIF_BUTTON_IMG_SE_PATH = os.path.join(
-    CURRENT_DIR, "HTML", "spine", "Image", "gif_button_selected.png"
+    CURRENT_DIR, "HTML", "static", "Image", "gif_button_selected.png"
 )
 SPINE_PROGRAM = "Spine.com"
 SPINE_EXE = "Spine.exe"
@@ -47,10 +47,15 @@ def ChangeLanguageEng():
 
 @app.route("/process", methods=["POST"])
 def process():
-    data = request.json
-    image_file = data["image_path"]
-    json_file = data["json_path"]
+    if "json_file" not in request.files or "image_file" not in request.files:
+        return jsonify({"error": "Missing files"}), 400
+
+    json_file = request.files["json_file"]
+    image_file = request.files["image_file"]
     output_gif_path = os.path.join(UPLOAD_IMG_FOLDER, "output_gif.gif")
+    if json_file.filename == "" or image_file.filename == "":
+        print("file error(local).\n")
+        return jsonify({"error": "No selected files"}), 400
 
     # save json file to local path
     json_path = os.path.join(JSON_FILE_FOLDER, json_file.filename)
@@ -62,7 +67,8 @@ def process():
     timeslot = now.strftime("%Y%m%d%H%M%S")  # yyyymmddhhmmss
     output_spine_name = "output" + timeslot + ".spine"
     spine_file_path = os.path.join(SPINE_FOLDER_PATH, output_spine_name)
-
+    print(f"json path: {json_path}\n")
+    print(f"spine file path: {spine_file_path}\n")
     subprocess.run(
         [
             spine_path,
@@ -150,8 +156,10 @@ def process():
         print(f"Retrying... ({5 - retries}/5)")
     if retries == 0:
         return jsonify({"error": "Failed to activate Spine window"}), 500
+    with open(output_gif_path, "rb") as gif_file:
+        gif_data = gif_file.read()
 
-    return send_file(output_gif_path, mimetype="image/gif")
+    return gif_data, 200, {"Content-Type": "image/gif"}
 
 
 if __name__ == "__main__":
