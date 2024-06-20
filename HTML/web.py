@@ -8,8 +8,7 @@ SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = 
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # import pythonFile.mesh as mesh
 sys.path.append(str(SRC_PATH / "pythonFile"))
-# import pythonFile.animate as animate
-import animate
+import pythonFile.animate as animate
 
 
 # src = (absolute path)\HTML

@@ -1,7 +1,11 @@
 # import numpy
 import json
 import os
-import pythonFile.weight as weight
+import sys
+import pathlib
+
+SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
+sys.path.append(str(SRC_PATH / "pythonFile"))
 import pythonFile.json_stringify as json_stringify
 
 FRAME_T = 30  # spine設定 30幀為1秒
