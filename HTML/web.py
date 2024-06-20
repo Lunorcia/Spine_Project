@@ -92,7 +92,7 @@ def upload():
         ) as img_file:
             print("Before send request.\n")
             response = requests.post(
-                "http://192.168.56.1:5001/process",
+                "https://8938-219-70-173-170.ngrok-free.app/process",
                 files={"json_file": json_file, "image_file": img_file},
             )
 
