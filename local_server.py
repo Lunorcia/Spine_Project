@@ -7,7 +7,7 @@ import ctypes
 import time
 import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SPINE_FOLDER_PATH = os.path.join(CURRENT_DIR, "HTML", "spine")
