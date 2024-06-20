@@ -6,7 +6,6 @@ import requests
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# import pythonFile.mesh as mesh
 
 sys.path.append(str(SRC_PATH))  # ensure SRC_PATH is in sys.path
 PYTHON_FILE_FOLDER = os.path.join(SRC_PATH, "pythonFile")
@@ -17,17 +16,9 @@ import pythonFile.animate as animate
 # src = (absolute path)\HTML
 # location of img file which user upload
 UPLOAD_IMG_FOLDER = os.path.join(SRC_PATH, "static", "Image", "Saved")
-
-# GIF_BUTTON_IMG_PATH = os.path.join(SRC_PATH, "static", "Image", "gif_button.png")
-# GIF_BUTTON_IMG_SE_PATH = os.path.join(
-#     SRC_PATH, "static", "Image", "gif_button_selected.png"
-# )
-
 JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "JsonFile")
 UPLOADED_JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "UploadedJson")
 
-# SPINE_PROGRAM = "Spine.com"
-# SPINE_EXE = "Spine.exe"
 
 TEMPLATE_MAPPING = {
     "Only Scale": {
@@ -99,6 +90,7 @@ def upload():
         with open(saved_json_path, "rb") as json_file, open(
             saved_img_path, "rb"
         ) as img_file:
+            print("Before send request.\n")
             response = requests.post(
                 "http://192.168.56.1:5001/process",
                 files={"json_file": json_file, "image_file": img_file},
@@ -117,6 +109,7 @@ def upload():
                     templates=TEMPLATE_MAPPING,
                 )
             else:
+                print("Request error.\n")
                 return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
