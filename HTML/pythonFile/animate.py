@@ -5,7 +5,9 @@ import sys
 import pathlib
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
-sys.path.append(str(SRC_PATH / "pythonFile"))
+sys.path.append(str(SRC_PATH))  # ensure SRC_PATH is in sys.path
+PYTHON_FILE_FOLDER = os.path.join(SRC_PATH, "pythonFile")
+sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.json_stringify as json_stringify
 
 FRAME_T = 30  # spine設定 30幀為1秒

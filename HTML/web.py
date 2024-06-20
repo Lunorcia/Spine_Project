@@ -7,7 +7,10 @@ import requests
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # import pythonFile.mesh as mesh
-sys.path.append(str(SRC_PATH / "pythonFile"))
+
+sys.path.append(str(SRC_PATH))  # ensure SRC_PATH is in sys.path
+PYTHON_FILE_FOLDER = os.path.join(SRC_PATH, "pythonFile")
+sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 
 
