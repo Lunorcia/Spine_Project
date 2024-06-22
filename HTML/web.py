@@ -55,7 +55,7 @@ def load_template_mapping():
 
 
 def save_template_mapping(mapping):
-    with open(mapping, "w") as f:
+    with open(TEMPLATE_MAPPING_FILE, "w") as f:
         json.dump(mapping, f, indent=4)
 
 
