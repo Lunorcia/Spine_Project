@@ -99,7 +99,7 @@ def process():
     # open spine file in Spine GUI
     subprocess.Popen([spine_path, spine_file_path, "--auto-start"])
     print("Spine launched successfully.")
-    time.sleep(9)
+    time.sleep(10)
 
     retries = 5
     while retries > 0:
