@@ -99,7 +99,7 @@ def process():
     # open spine file in Spine GUI
     subprocess.Popen([spine_path, spine_file_path, "--auto-start"])
     print("Spine launched successfully.")
-    time.sleep(10)
+    time.sleep(9)
 
     retries = 5
     while retries > 0:
@@ -157,7 +157,7 @@ def process():
                 pyautogui.press("enter")
                 time.sleep(0.5)
                 pyautogui.press("enter")
-                time.sleep(1)
+                time.sleep(3)
                 break
             except Exception as e:
                 print(f"Failed to activate Spine window: {e}")
