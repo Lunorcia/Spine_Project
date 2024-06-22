@@ -102,6 +102,7 @@ def upload():
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
                 },
+                timeout=180,
             )
 
             if response.status_code == 200:
