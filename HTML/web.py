@@ -4,6 +4,7 @@ import sys
 import os
 import requests
 import mimetypes
+import json
 
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
@@ -20,7 +21,7 @@ import pythonFile.animate as animate
 UPLOAD_IMG_FOLDER = os.path.join(SRC_PATH, "static", "Image", "Saved")
 JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "JsonFile")
 UPLOADED_JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "UploadedJson")
-
+TEMPLATE_MAPPING_FILE = os.path.join(SRC_PATH, "template_mapping.json")
 
 TEMPLATE_MAPPING = {
     "Only Scale": {
@@ -46,17 +47,30 @@ TEMPLATE_MAPPING = {
 app = Flask(__name__, static_url_path="/static")
 
 
+def load_template_mapping():
+    if os.path.exists(TEMPLATE_MAPPING_FILE):
+        with open(TEMPLATE_MAPPING_FILE, "r") as f:
+            return json.load(f)
+    return TEMPLATE_MAPPING
+
+
+def save_template_mapping(mapping):
+    with open(mapping, "w") as f:
+        json.dump(mapping, f, indent=4)
+
+
 @app.route("/")
 def index():
-    print("route/")
+    mapping = load_template_mapping()
     return render_template(
-        "anim.html", image_web_url="", gif_web_url="", templates=TEMPLATE_MAPPING
+        "anim.html", image_web_url="", gif_web_url="", templates=mapping
     )
 
 
 @app.route("/add_template_page")
 def add_template_page():
-    return render_template("add_template.html", templates=TEMPLATE_MAPPING)
+    mapping = load_template_mapping()
+    return render_template("add_template.html", templates=mapping)
 
 
 @app.route("/upload", methods=["POST"])
@@ -72,7 +86,8 @@ def upload():
     saved_img_path = os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename)
 
     # choose template json
-    type_dict = TEMPLATE_MAPPING.get(selected_type)
+    mapping = load_template_mapping()
+    type_dict = mapping.get(selected_type)
     template_json_path = type_dict.get(selected_template)
     saved_json_path = ""
     if not template_json_path or not os.path.exists(template_json_path):
@@ -115,7 +130,7 @@ def upload():
                     "anim.html",
                     image_web_url=img_url,
                     gif_web_url=gif_url,
-                    templates=TEMPLATE_MAPPING,
+                    templates=mapping,
                 )
             else:
                 print("Request failed.\n")
@@ -143,10 +158,13 @@ def add_template():
         new_template_file.save(file_path)
 
         # Update the TEMPLATE_MAPPING
-        if animation_type in TEMPLATE_MAPPING:
-            TEMPLATE_MAPPING[animation_type][new_template_name] = file_path
+        mapping = load_template_mapping()
+        if animation_type in mapping:
+            mapping[animation_type][new_template_name] = file_path
         else:
-            TEMPLATE_MAPPING[animation_type] = {new_template_name: file_path}
+            mapping[animation_type] = {new_template_name: file_path}
+
+        save_template_mapping(mapping)
 
         return redirect(url_for("index"))
 
