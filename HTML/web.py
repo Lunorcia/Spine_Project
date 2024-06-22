@@ -5,6 +5,7 @@ import os
 import requests
 import mimetypes
 
+
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

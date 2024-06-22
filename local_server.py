@@ -6,6 +6,7 @@ import pygetwindow as gw
 import ctypes
 import time
 import datetime
+import json
 
 app = Flask(__name__, static_url_path="/static")
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -57,12 +58,21 @@ def process():
         print("file error(local).\n")
         return jsonify({"error": "No selected files"}), 400
 
-    # save json file to local path
+    # save json & image file to local path
     json_path = os.path.join(JSON_FILE_FOLDER, json_file.filename)
     json_file.save(json_path)
+    # modify image folder path to ///local path/// in json file
+    with open(json_path, "r") as j_file:
+        json_data = json.load(j_file)
+    json_data["skeleton"]["images"] = UPLOAD_IMG_FOLDER
+    with open(json_path, "w") as j_file:
+        json.dump(json_data, j_file, indent=4)
 
-    spine_path = FindSpineProgram()
+    image_path = os.path.join(UPLOAD_IMG_FOLDER, image_file.filename)
+    image_file.save(image_path)
+
     # launch Spine CLI to export .spine file from animation.json
+    spine_path = FindSpineProgram()
     now = datetime.datetime.now(tz=datetime.timezone(datetime.timedelta(hours=8)))
     timeslot = now.strftime("%Y%m%d%H%M%S")  # yyyymmddhhmmss
     output_spine_name = "output" + timeslot + ".spine"
