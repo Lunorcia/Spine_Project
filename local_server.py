@@ -46,6 +46,83 @@ def ChangeLanguageEng():
     ctypes.windll.user32.PostMessageW(hwnd, 0x50, 0, HKL)
 
 
+def AdjustScale(json_data, intensity):
+    for animation_name, animation in json_data["animations"].items():
+        for b_name, b_animation in animation["bones"].items():
+            if "scale" in b_animation and b_animation["scale"]:
+                prev_x = b_animation["scale"][0]["x"]
+                prev_y = b_animation["scale"][0]["y"]
+
+                for frame in b_animation["scale"]:
+                    current_x = frame["x"]
+                    current_y = frame["y"]
+
+                    if current_x * prev_x >= 0:  # 同正or同負
+                        # enhance x
+                        if abs(current_x) >= abs(prev_x):
+                            frame["x"] *= intensity
+                        else:
+                            frame["x"] /= intensity
+                        if abs(frame["x"]) < 0.001:  # prevent scale=0
+                            frame["x"] = 0.001 if frame["x"] > 0 else -0.01
+                    else:  # 一正一負
+                        frame["x"] *= intensity
+                        if abs(frame["x"]) < 0.001:  # prevent scale=0
+                            frame["x"] = 0.001 if frame["x"] > 0 else -0.01
+
+                    if current_y * prev_y >= 0:  # 同正or同負
+                        # enhance y
+                        if abs(current_y) >= abs(prev_y):
+                            frame["y"] *= intensity
+                        else:
+                            frame["y"] /= intensity
+                        if abs(frame["y"]) < 0.001:  # prevent scale=0
+                            frame["y"] = 0.001 if frame["y"] > 0 else -0.01
+                    else:  # 一正一負
+                        frame["y"] *= intensity
+                        if abs(frame["x"]) < 0.001:  # prevent scale=0
+                            frame["x"] = 0.001 if frame["x"] > 0 else -0.01
+
+                    prev_x = current_x
+                    prev_y = current_y
+    return json_data
+
+
+def AdjustTranslate(json_data, intensity):
+    for animation_name, animation in json_data["animations"].items():
+        for b_name, b_animation in animation["bones"].items():
+            if "translate" in b_animation and b_animation["translate"]:
+                for frame in b_animation["translate"]:
+                    frame["x"] *= intensity
+                    frame["y"] *= intensity
+    return json_data
+
+
+def AdjustRotate(json_data, intensity):
+    for animation_name, animation in json_data["animations"].items():
+        for b_name, b_animation in animation["bones"].items():
+            if "rotate" in b_animation and b_animation["rotate"]:
+                prev_value = b_animation["rotate"][0]["value"]
+
+                for frame in b_animation["rotate"]:
+                    current_value = frame["value"]
+
+                    if current_value * prev_value >= 0:  # 同正or同負
+                        if abs(current_value) >= abs(prev_value):
+                            frame["value"] *= intensity
+                        else:
+                            frame["value"] /= intensity
+                    else:  # 一正一負
+                        frame["value"] *= intensity
+
+                    if frame["value"] < 0:  # ensure angle won't exceed -360
+                        while frame["value"] < -360:  # and keep value negative
+                            frame["value"] += 360
+                    else:
+                        frame["value"] = frame["value"] % 360
+    return json_data
+
+
 @app.route("/process", methods=["POST"])
 def process():
     if "json_file" not in request.files or "image_file" not in request.files:
@@ -53,6 +130,7 @@ def process():
 
     json_file = request.files["json_file"]
     image_file = request.files["image_file"]
+    intensity = float(request.form.get("intensity", 1.0))
     output_gif_path = os.path.join(UPLOAD_IMG_FOLDER, "output_gif.gif")
     if json_file.filename == "" or image_file.filename == "":
         print("file error(local).\n")
@@ -65,6 +143,13 @@ def process():
     with open(json_path, "r") as j_file:
         json_data = json.load(j_file)
     json_data["skeleton"]["images"] = UPLOAD_IMG_FOLDER
+
+    # adjust animation factor
+    if intensity != 1.0:
+        json_data = AdjustScale(json_data, intensity)
+        json_data = AdjustTranslate(json_data, intensity)
+        json_data = AdjustRotate(json_data, intensity)
+
     with open(json_path, "w") as j_file:
         json.dump(json_data, j_file, indent=4)
 

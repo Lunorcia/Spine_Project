@@ -1,0 +1,104 @@
+{
+    "skeleton": {
+        "hash": "XT2FTPSiEUa",
+        "spine": "4.2.20",
+        "images": "C:\\Users\\cyivs\\OneDrive\\Desktop\\Spine_Project\\HTML\\static\\Image\\Saved",
+        "audio": ""
+    },
+    "bones": [
+        {
+            "name": "root",
+            "x": 0.0,
+            "y": 0.0
+        },
+        {
+            "name": "subroot",
+            "parent": "root",
+            "x": 0.0,
+            "y": 0.0
+        }
+    ],
+    "slots": [
+        {
+            "name": "l_symbol",
+            "bone": "subroot",
+            "attachment": "Je.png"
+        }
+    ],
+    "skins": [
+        {
+            "name": "default",
+            "attachments": {
+                "l_symbol": {
+                    "Je.png": {
+                        "width": 115,
+                        "height": 115
+                    }
+                }
+            }
+        }
+    ],
+    "animations": {
+        "03win": {
+            "bones": {
+                "subroot": {
+                    "scale": [
+                        {
+                            "time": 0.0,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": [
+                                0.01,
+                                0.998,
+                                0.043,
+                                0.99,
+                                0.01,
+                                0.998,
+                                0.043,
+                                0.99
+                            ]
+                        },
+                        {
+                            "time": 0.0667,
+                            "x": 0.99,
+                            "y": 0.99,
+                            "curve": [
+                                0.1,
+                                0.99,
+                                0.167,
+                                1.01,
+                                0.1,
+                                0.99,
+                                0.167,
+                                1.01
+                            ]
+                        },
+                        {
+                            "time": 0.2,
+                            "x": 1.01,
+                            "y": 1.01,
+                            "curve": [
+                                0.275,
+                                1.01,
+                                0.425,
+                                1,
+                                0.275,
+                                1.01,
+                                0.425,
+                                1
+                            ]
+                        },
+                        {
+                            "time": 0.5,
+                            "x": 1.0,
+                            "y": 1.0,
+                            "curve": []
+                        }
+                    ],
+                    "rotate": [],
+                    "translate": []
+                }
+            }
+        }
+    }
+}

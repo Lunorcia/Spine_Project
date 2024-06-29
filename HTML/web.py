@@ -80,6 +80,7 @@ def upload():
     selected_letter = request.form["letter"]
     selected_template = request.form["template"]
     selected_type = request.form["animationType"]
+    intensity = float(request.form.get("intensity", 1.0))
     # 將圖片保存到伺服器
     uploaded_image.save(os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename))
     img_url = f"/Image/Saved/{uploaded_image.filename}"  # /static written in html
@@ -117,6 +118,7 @@ def upload():
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
                 },
+                data={"intensity": intensity},
                 timeout=180,
             )
 
