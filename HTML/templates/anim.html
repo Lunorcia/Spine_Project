@@ -45,6 +45,16 @@
         {
             UpdateSecondDropdown();
         };
+
+        const intensityRange = document.getElementById('intensityRange');
+        const intensityValue = document.getElementById('intensityValue');
+        const intensityInput = document.getElementById('intensity');
+
+        intensityRange.addEventListener('input', function() {
+            intensityValue.textContent = intensityRange.value;
+            intensityInput.value = intensityRange.value;
+        });
+        intensityValue.textContent = intensityRange.value;
     </script>
 </head>
 <body>
