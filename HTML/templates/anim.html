@@ -43,6 +43,9 @@
             }
             // Initialize the second dropdown when the page loads
             UpdateSecondDropdown();
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
+
 
             const intensityRange = document.getElementById('intensityRange');
             const intensityValue = document.getElementById('intensityValue');
@@ -52,12 +55,9 @@
                 intensityValue.textContent = intensityRange.value;
                 intensityInput.value = intensityRange.value;
             });
+            
             intensityValue.textContent = intensityRange.value;
         });
-        window.onload = function() 
-        {
-            UpdateSecondDropdown();
-        };
     </script>
 </head>
 <body>
