@@ -149,6 +149,7 @@ def process():
         json_data = AdjustScale(json_data, intensity)
         json_data = AdjustTranslate(json_data, intensity)
         json_data = AdjustRotate(json_data, intensity)
+        print("Adjust complete.\n")
 
     with open(json_path, "w") as j_file:
         json.dump(json_data, j_file, indent=4)
