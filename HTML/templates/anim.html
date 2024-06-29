@@ -42,10 +42,7 @@
                 }
             }
             // Initialize the second dropdown when the page loads
-            window.onload = function() 
-            {
-                UpdateSecondDropdown();
-            };
+            UpdateSecondDropdown();
 
             const intensityRange = document.getElementById('intensityRange');
             const intensityValue = document.getElementById('intensityValue');
@@ -57,6 +54,10 @@
             });
             intensityValue.textContent = intensityRange.value;
         });
+        window.onload = function() 
+        {
+            UpdateSecondDropdown();
+        };
     </script>
 </head>
 <body>
