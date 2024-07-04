@@ -1,8 +1,8 @@
 {
     "skeleton": {
-        "hash": "NXwkcI7IhMc",
+        "hash": "vybOhR3BPXP",
         "spine": "4.2.20",
-        "images": "C:\\Users\\cyivs\\OneDrive\\Desktop\\Spine_Project\\HTML\\static\\Image\\Saved",
+        "images": "c:\\Users\\cyivs\\OneDrive\\Desktop\\VSCode\\HTML\\static\\Image\\Saved",
         "audio": ""
     },
     "bones": [
@@ -82,72 +82,72 @@
         {
             "name": "sym",
             "bone": "M5-M8",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym2",
             "bone": "M1",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym3",
             "bone": "M2",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym4",
             "bone": "M3",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym5",
             "bone": "M4",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym6",
             "bone": "Scatter",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "sym7",
             "bone": "Wild",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH",
             "bone": "M5-M8",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH2",
             "bone": "M1",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH3",
             "bone": "M2",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH4",
             "bone": "M3",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH5",
             "bone": "M4",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH6",
             "bone": "Scatter",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         },
         {
             "name": "symH7",
             "bone": "Wild",
-            "attachment": "28a8513919088d3328aaa40284c6b13e.png"
+            "attachment": "10e.png"
         }
     ],
     "skins": [
@@ -155,9 +155,9 @@
             "name": "default",
             "attachments": {
                 "sym": {
-                    "28a8513919088d3328aaa40284c6b13e.png": {
-                        "width": 1920,
-                        "height": 1920
+                    "10e.png": {
+                        "width": 125,
+                        "height": 125
                     }
                 }
             }

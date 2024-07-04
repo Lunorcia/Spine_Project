@@ -46,14 +46,33 @@ def ChangeLanguageEng():
     ctypes.windll.user32.PostMessageW(hwnd, 0x50, 0, HKL)
 
 
+def AdjustCurve(curve, intensity, indices, operation):
+    for i in indices:
+        if i < len(curve):
+            if operation == "mul":
+                curve[i] *= intensity
+            elif operation == "div":
+                curve[i] /= intensity
+    return curve
+
+
 def AdjustScale(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "scale" in b_animation and b_animation["scale"]:
                 prev_x = b_animation["scale"][0]["x"]
                 prev_y = b_animation["scale"][0]["y"]
+                first_x = prev_x
+                first_y = prev_y
+                last_x = b_animation["scale"][-1]["x"]
+                last_y = b_animation["scale"][-1]["y"]
+                for index, frame in enumerate(b_animation["scale"]):
+                    # skip first & last frame if value is the same (to keep animation continous)
+                    if (index == 0 or index == len(b_animation["scale"]) - 1) and (
+                        first_x == last_x and first_y == last_y
+                    ):
+                        continue
 
-                for frame in b_animation["scale"]:
                     current_x = frame["x"]
                     current_y = frame["y"]
 
@@ -61,12 +80,70 @@ def AdjustScale(json_data, intensity):
                         # enhance x
                         if abs(current_x) >= abs(prev_x):
                             frame["x"] *= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [1], "mul"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["scale"][index - 1]
+                                    and b_animation["scale"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["scale"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["scale"][index - 1]["curve"],
+                                            intensity,
+                                            [3],
+                                            "mul",
+                                        )
+                                    )
+                        # weaken x
                         else:
                             frame["x"] /= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [1], "div"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["scale"][index - 1]
+                                    and b_animation["scale"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["scale"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["scale"][index - 1]["curve"],
+                                            intensity,
+                                            [3],
+                                            "div",
+                                        )
+                                    )
+
                         if abs(frame["x"]) < 0.001:  # prevent scale=0
                             frame["x"] = 0.001 if frame["x"] > 0 else -0.01
+
                     else:  # 一正一負
                         frame["x"] *= intensity
+                        # adjust curve (current and previous frame)
+                        if "curve" in frame and frame["curve"] != "stepped":
+                            frame["curve"] = AdjustCurve(
+                                frame["curve"], intensity, [1], "mul"
+                            )
+                            if (
+                                index > 0
+                                and "curve" in b_animation["scale"][index - 1]
+                                and b_animation["scale"][index - 1]["curve"]
+                                != "stepped"
+                            ):
+                                b_animation["scale"][index - 1]["curve"] = AdjustCurve(
+                                    b_animation["scale"][index - 1]["curve"],
+                                    intensity,
+                                    [3],
+                                    "mul",
+                                )
                         if abs(frame["x"]) < 0.001:  # prevent scale=0
                             frame["x"] = 0.001 if frame["x"] > 0 else -0.01
 
@@ -74,12 +151,69 @@ def AdjustScale(json_data, intensity):
                         # enhance y
                         if abs(current_y) >= abs(prev_y):
                             frame["y"] *= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [5], "mul"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["scale"][index - 1]
+                                    and b_animation["scale"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["scale"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["scale"][index - 1]["curve"],
+                                            intensity,
+                                            [7],
+                                            "mul",
+                                        )
+                                    )
                         else:
                             frame["y"] /= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [5], "div"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["scale"][index - 1]
+                                    and b_animation["scale"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["scale"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["scale"][index - 1]["curve"],
+                                            intensity,
+                                            [7],
+                                            "div",
+                                        )
+                                    )
+
                         if abs(frame["y"]) < 0.001:  # prevent scale=0
                             frame["y"] = 0.001 if frame["y"] > 0 else -0.01
+
                     else:  # 一正一負
                         frame["y"] *= intensity
+                        # adjust curve (current and previous frame)
+                        if "curve" in frame and frame["curve"] != "stepped":
+                            frame["curve"] = AdjustCurve(
+                                frame["curve"], intensity, [5], "mul"
+                            )
+                            if (
+                                index > 0
+                                and "curve" in b_animation["scale"][index - 1]
+                                and b_animation["scale"][index - 1]["curve"]
+                                != "stepped"
+                            ):
+                                b_animation["scale"][index - 1]["curve"] = AdjustCurve(
+                                    b_animation["scale"][index - 1]["curve"],
+                                    intensity,
+                                    [7],
+                                    "mul",
+                                )
                         if abs(frame["x"]) < 0.001:  # prevent scale=0
                             frame["x"] = 0.001 if frame["x"] > 0 else -0.01
 
@@ -92,9 +226,36 @@ def AdjustTranslate(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "translate" in b_animation and b_animation["translate"]:
-                for frame in b_animation["translate"]:
+                first_x = b_animation["scale"][0]["x"]
+                first_y = b_animation["scale"][0]["y"]
+                last_x = b_animation["scale"][-1]["x"]
+                last_y = b_animation["scale"][-1]["y"]
+                for index, frame in enumerate(b_animation["translate"]):
+                    # skip first & last frame if value is the same (to keep animation continous)
+                    if (index == 0 or index == len(b_animation["translate"]) - 1) and (
+                        first_x == last_x and first_y == last_y
+                    ):
+                        continue
+
                     frame["x"] *= intensity
                     frame["y"] *= intensity
+                    # adjust curve (current and previous frame)
+                    if "curve" in frame and frame["curve"] != "stepped":
+                        frame["curve"] = AdjustCurve(
+                            frame["curve"], intensity, [1, 3], "mul"
+                        )
+                        if (
+                            index > 0
+                            and "curve" in b_animation["translate"][index - 1]
+                            and b_animation["translate"][index - 1]["curve"]
+                            != "stepped"
+                        ):
+                            b_animation["translate"][index - 1]["curve"] = AdjustCurve(
+                                b_animation["translate"][index - 1]["curve"],
+                                intensity,
+                                [5, 7],
+                                "mul",
+                            )
     return json_data
 
 
@@ -103,23 +264,88 @@ def AdjustRotate(json_data, intensity):
         for b_name, b_animation in animation["bones"].items():
             if "rotate" in b_animation and b_animation["rotate"]:
                 prev_value = b_animation["rotate"][0]["value"]
+                first_value = prev_value
+                last_value = b_animation["rotate"][-1]["value"]
 
-                for frame in b_animation["rotate"]:
+                for index, frame in enumerate(b_animation["rotate"]):
+                    # skip first & last frame if value is the same (to keep animation continous)
+                    if (index == 0 or index == len(b_animation["rotate"]) - 1) and (
+                        first_value == last_value
+                    ):
+                        continue
+
                     current_value = frame["value"]
 
                     if current_value * prev_value >= 0:  # 同正or同負
                         if abs(current_value) >= abs(prev_value):
                             frame["value"] *= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [1], "mul"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["rotate"][index - 1]
+                                    and b_animation["rotate"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["rotate"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["rotate"][index - 1]["curve"],
+                                            intensity,
+                                            [3],
+                                            "mul",
+                                        )
+                                    )
                         else:
                             frame["value"] /= intensity
+                            # adjust curve (current and previous frame)
+                            if "curve" in frame and frame["curve"] != "stepped":
+                                frame["curve"] = AdjustCurve(
+                                    frame["curve"], intensity, [1], "div"
+                                )
+                                if (
+                                    index > 0
+                                    and "curve" in b_animation["rotate"][index - 1]
+                                    and b_animation["rotate"][index - 1]["curve"]
+                                    != "stepped"
+                                ):
+                                    b_animation["rotate"][index - 1]["curve"] = (
+                                        AdjustCurve(
+                                            b_animation["rotate"][index - 1]["curve"],
+                                            intensity,
+                                            [3],
+                                            "div",
+                                        )
+                                    )
                     else:  # 一正一負
                         frame["value"] *= intensity
+                        # adjust curve (current and previous frame)
+                        if "curve" in frame and frame["curve"] != "stepped":
+                            frame["curve"] = AdjustCurve(
+                                frame["curve"], intensity, [1], "mul"
+                            )
+                            if (
+                                index > 0
+                                and "curve" in b_animation["rotate"][index - 1]
+                                and b_animation["rotate"][index - 1]["curve"]
+                                != "stepped"
+                            ):
+                                b_animation["rotate"][index - 1]["curve"] = AdjustCurve(
+                                    b_animation["rotate"][index - 1]["curve"],
+                                    intensity,
+                                    [3],
+                                    "mul",
+                                )
 
                     if frame["value"] < 0:  # ensure angle won't exceed -360
                         while frame["value"] < -360:  # and keep value negative
                             frame["value"] += 360
                     else:
                         frame["value"] = frame["value"] % 360
+
+                    prev_value = current_value
     return json_data
 
 
