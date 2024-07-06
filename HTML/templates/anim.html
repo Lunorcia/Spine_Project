@@ -62,6 +62,13 @@
                 speedValue.textContent = speedRange.value;
                 speedInput.value = speedRange.value;
             }
+
+            const intensityRange = document.getElementById('intensityRange');
+            const speedRange = document.getElementById('speedRange');
+            intensityRange.addEventListener('input', updateIntensityValue);
+            speedRange.addEventListener('input', updateSpeedValue);
+            updateIntensityValue();
+            updateSpeedValue();
             
         });
     </script>
@@ -98,12 +105,12 @@
                 </select><br><br>
 
                 <label for="intensityRange">Intensity:</label>
-                <input type="range" id="intensityRange" name="intensityRange" min="0.1" max="2.0" step="0.1" value="1.0" oninput="updateIntensityValue()">
+                <input type="range" id="intensityRange" name="intensityRange" min="0.1" max="2.0" step="0.1" value="1.0">
                 <span id="intensityValue">1.0</span>
                 <input type="hidden" id="intensity" name="intensity" value="1.0">
 
                 <label for="speedRange">Speed:</label>
-                <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="1.0" oninput="updateSpeedValue()">
+                <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="1.0">
                 <span id="speedValue">1.0</span>
                 <input type="hidden" id="speed" name="speed" value="1.0"><br><br>
 
