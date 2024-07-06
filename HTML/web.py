@@ -80,7 +80,9 @@ def upload():
     selected_letter = request.form["letter"]
     selected_template = request.form["template"]
     selected_type = request.form["animationType"]
-    intensity = float(request.form.get("intensity", 1.0))
+    intensity_translate = float(request.form.get("intensityTranslate", 1.0))
+    intensity_scale = float(request.form.get("intensityScale", 1.0))
+    intensity_rotate = float(request.form.get("intensityRotate", 1.0))
     speed = float(request.form.get("speed", 1.0))
     # 將圖片保存到伺服器
     uploaded_image.save(os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename))
@@ -119,7 +121,12 @@ def upload():
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
                 },
-                data={"intensity": intensity, "speed": speed},
+                data={
+                    "intensityTranslate": intensity_translate,
+                    "intensityScale": intensity_scale,
+                    "intensityRotate": intensity_rotate,
+                    "speed": speed,
+                },
                 timeout=180,
             )
 

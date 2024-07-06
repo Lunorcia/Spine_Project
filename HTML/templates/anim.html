@@ -47,10 +47,10 @@
             animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
             
 
-            function updateIntensityValue() {
-                const intensityRange = document.getElementById('intensityRange');
-                const intensityValue = document.getElementById('intensityValue');
-                const intensityInput = document.getElementById('intensity');
+            function updateIntensityValue(rangeID, valueID, inputID) {
+                const intensityRange = document.getElementById(rangeID);
+                const intensityValue = document.getElementById(valueID);
+                const intensityInput = document.getElementById(inputID);
                 intensityValue.textContent = intensityRange.value;
                 intensityInput.value = intensityRange.value;
             }
@@ -63,12 +63,28 @@
                 speedInput.value = speedRange.value;
             }
 
-            const intensityRange = document.getElementById('intensityRange');
             const speedRange = document.getElementById('speedRange');
-            intensityRange.addEventListener('input', updateIntensityValue);
             speedRange.addEventListener('input', updateSpeedValue);
-            updateIntensityValue();
             updateSpeedValue();
+
+            updateIntensityValue('intensityTranslateRange', 'intensityTranslateValue', 'intensityTranslate');
+            updateIntensityValue('intensityScaleRange', 'intensityScaleValue', 'intensityScale');
+            updateIntensityValue('intensityRotateRange', 'intensityRotateValue', 'intensityRotate');
+
+            const translateRange = document.getElementById('intensityTranslateRange');
+            const scaleRange = document.getElementById('intensityScaleRange');
+            const rotateRange = document.getElementById('intensityRotateRange');
+
+            translateRange.addEventListener('input', function() {
+                updateIntensityValue('intensityTranslateRange', 'intensityTranslateValue', 'intensityTranslate');
+            });
+            scaleRange.addEventListener('input', function() {
+                updateIntensityValue('intensityScaleRange', 'intensityScaleValue', 'intensityScale');
+            });
+            rotateRange.addEventListener('input', function() {
+                updateIntensityValue('intensityRotateRange', 'intensityRotateValue', 'intensityRotate');
+            });
+            
             
         });
     </script>
@@ -104,10 +120,20 @@
                     <!-- This will be populated based on the first dropdown -->
                 </select><br><br>
 
-                <label for="intensityRange">Intensity:</label>
-                <input type="range" id="intensityRange" name="intensityRange" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span id="intensityValue">1.0</span>
-                <input type="hidden" id="intensity" name="intensity" value="1.0">
+                <label for="intensityTranslateRange">Translate Intensity:</label>
+                <input type="range" id="intensityTranslateRange" name="intensityTranslateRange" min="0.1" max="2.0" step="0.1" value="1.0">
+                <span id="intensityTranslateValue">1.0</span>
+                <input type="hidden" id="intensityTranslate" name="intensityTranslate" value="1.0"><br><br>
+
+                <label for="intensityScaleRange">Scale Intensity:</label>
+                <input type="range" id="intensityScaleRange" name="intensityScaleRange" min="0.1" max="2.0" step="0.1" value="1.0">
+                <span id="intensityScaleValue">1.0</span>
+                <input type="hidden" id="intensityScale" name="intensityScale" value="1.0"><br><br>
+
+                <label for="intensityRotateRange">Rotate Intensity:</label>
+                <input type="range" id="intensityRotateRange" name="intensityRotateRange" min="0.1" max="2.0" step="0.1" value="1.0">
+                <span id="intensityRotateValue">1.0</span>
+                <input type="hidden" id="intensityRotate" name="intensityRotate" value="1.0"><br><br>
 
                 <label for="speedRange">Speed:</label>
                 <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="1.0">

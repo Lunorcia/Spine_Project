@@ -376,8 +376,11 @@ def process():
 
     json_file = request.files["json_file"]
     image_file = request.files["image_file"]
-    intensity = float(request.form.get("intensity", 1.0))
+    intensity_translate = float(request.form.get("intensityTranslate", 1.0))
+    intensity_scale = float(request.form.get("intensityScale", 1.0))
+    intensity_rotate = float(request.form.get("intensityRotate", 1.0))
     speed = float(request.form.get("speed", 1.0))
+
     output_gif_path = os.path.join(UPLOAD_IMG_FOLDER, "output_gif.gif")
     if json_file.filename == "" or image_file.filename == "":
         print("file error(local).\n")
@@ -392,12 +395,12 @@ def process():
     json_data["skeleton"]["images"] = UPLOAD_IMG_FOLDER
 
     # adjust animation factor
-    if intensity != 1.0:
-        json_data = AdjustScale(json_data, intensity)
-        json_data = AdjustTranslate(json_data, intensity)
-        json_data = AdjustRotate(json_data, intensity)
-        print("Adjust complete.\n")
-
+    if intensity_scale != 1.0:
+        json_data = AdjustScale(json_data, intensity_scale)
+    if intensity_translate != 1.0:
+        json_data = AdjustTranslate(json_data, intensity_translate)
+    if intensity_rotate != 1.0:
+        json_data = AdjustRotate(json_data, intensity_rotate)
     if speed != 1.0:
         json_data = AdjustSpeed(json_data, speed)
 
