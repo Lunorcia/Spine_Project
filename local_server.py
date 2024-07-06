@@ -46,11 +46,6 @@ def ChangeLanguageEng():
     ctypes.windll.user32.PostMessageW(hwnd, 0x50, 0, HKL)
 
 
-def AdjustSpeed(json_data, speed):
-    print(f"speed = {speed}\n")
-    return json_data
-
-
 def AdjustCurve(curve, intensity, indices, operation):
     for i in indices:
         if i < len(curve):
@@ -59,6 +54,26 @@ def AdjustCurve(curve, intensity, indices, operation):
             elif operation == "div":
                 curve[i] /= intensity
     return curve
+
+
+def AdjustSpeed(json_data, speed):
+    for animation_name, animation in json_data["animations"].items():
+        for b_name, b_animation in animation["bones"].items():
+            for transform_type in ["scale", "translate", "rotate"]:
+                if transform_type in b_animation and b_animation[transform_type]:
+                    for index, frame in enumerate(b_animation[transform_type]):
+                        if "time" in frame:
+                            frame["time"] /= speed
+                        if (
+                            "curve" in frame
+                            and frame["curve"] != "stepped"
+                            and frame["curve"]
+                        ):
+                            frame["curve"] = AdjustCurve(
+                                frame["curve"], speed, [0, 2, 4, 6], "div"
+                            )
+
+    return json_data
 
 
 def AdjustScale(json_data, intensity):
