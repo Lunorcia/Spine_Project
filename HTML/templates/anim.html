@@ -45,18 +45,24 @@
             UpdateSecondDropdown();
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
+            
 
-
-            const intensityRange = document.getElementById('intensityRange');
-            const intensityValue = document.getElementById('intensityValue');
-            const intensityInput = document.getElementById('intensity');
-
-            intensityRange.addEventListener('input', function() {
+            function updateIntensityValue() {
+                const intensityRange = document.getElementById('intensityRange');
+                const intensityValue = document.getElementById('intensityValue');
+                const intensityInput = document.getElementById('intensity');
                 intensityValue.textContent = intensityRange.value;
                 intensityInput.value = intensityRange.value;
-            });
+            }
+
+            function updateSpeedValue() {
+                const speedRange = document.getElementById('speedRange');
+                const speedValue = document.getElementById('speedValue');
+                const speedInput = document.getElementById('speed');
+                speedValue.textContent = speedRange.value;
+                speedInput.value = speedRange.value;
+            }
             
-            intensityValue.textContent = intensityRange.value;
         });
     </script>
 </head>
@@ -92,9 +98,14 @@
                 </select><br><br>
 
                 <label for="intensityRange">Intensity:</label>
-                <input type="range" id="intensityRange" name="intensityRange" min="0.1" max="2.0" step="0.1" value="1.0">
+                <input type="range" id="intensityRange" name="intensityRange" min="0.1" max="2.0" step="0.1" value="1.0" oninput="updateIntensityValue()">
                 <span id="intensityValue">1.0</span>
                 <input type="hidden" id="intensity" name="intensity" value="1.0">
+
+                <label for="speedRange">Speed:</label>
+                <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="1.0" oninput="updateSpeedValue()">
+                <span id="speedValue">1.0</span>
+                <input type="hidden" id="speed" name="speed" value="1.0"><br><br>
 
                 <input type="submit" value="生成動畫">
             </form><br>

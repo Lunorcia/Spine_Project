@@ -81,6 +81,7 @@ def upload():
     selected_template = request.form["template"]
     selected_type = request.form["animationType"]
     intensity = float(request.form.get("intensity", 1.0))
+    speed = float(request.form.get("speed", 1.0))
     # 將圖片保存到伺服器
     uploaded_image.save(os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename))
     img_url = f"/Image/Saved/{uploaded_image.filename}"  # /static written in html
@@ -113,12 +114,12 @@ def upload():
             print("Before send request.\n")
             img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                "https://cf4e-219-70-173-170.ngrok-free.app/process",
+                "https://31e5-219-70-173-170.ngrok-free.app/process",
                 files={
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
                 },
-                data={"intensity": intensity},
+                data={"intensity": intensity, "speed": speed},
                 timeout=180,
             )
 

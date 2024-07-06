@@ -46,6 +46,11 @@ def ChangeLanguageEng():
     ctypes.windll.user32.PostMessageW(hwnd, 0x50, 0, HKL)
 
 
+def AdjustSpeed(json_data, speed):
+    print(f"speed = {speed}\n")
+    return json_data
+
+
 def AdjustCurve(curve, intensity, indices, operation):
     for i in indices:
         if i < len(curve):
@@ -357,6 +362,7 @@ def process():
     json_file = request.files["json_file"]
     image_file = request.files["image_file"]
     intensity = float(request.form.get("intensity", 1.0))
+    speed = float(request.form.get("speed", 1.0))
     output_gif_path = os.path.join(UPLOAD_IMG_FOLDER, "output_gif.gif")
     if json_file.filename == "" or image_file.filename == "":
         print("file error(local).\n")
@@ -376,6 +382,9 @@ def process():
         json_data = AdjustTranslate(json_data, intensity)
         json_data = AdjustRotate(json_data, intensity)
         print("Adjust complete.\n")
+
+    if speed != 1.0:
+        json_data = AdjustSpeed(json_data, speed)
 
     with open(json_path, "w") as j_file:
         json.dump(json_data, j_file, indent=4)
