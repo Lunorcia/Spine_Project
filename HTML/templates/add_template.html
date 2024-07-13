@@ -91,6 +91,8 @@
             }
             //no conflict name
             templateMessage.innerText = "";
+            if (submitButton.disabled)  //invalid new template type name cause it disabled
+                return;
             submitButton.disabled = false;
         }
 

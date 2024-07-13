@@ -23,57 +23,58 @@
         }
     </style>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const templates = {{ templates | tojson }};
 
-            function UpdateSecondDropdown() 
-            {
-                const animationTypeSelect = document.getElementById("animationTypeSelect");
-                const templateSelect = document.getElementById("templateSelect");
-                const selectedType = animationTypeSelect.value;
-                
-                // Clear the second dropdown
-                templateSelect.innerHTML = "";
-                
-                // Populate the second dropdown based on the selected type
-                for (const [templateName, templateFile] of Object.entries(templates[selectedType])) {
-                    const option = document.createElement("option");
-                    option.value = templateName;
-                    option.text = templateName;
-                    templateSelect.appendChild(option);
-                }
+        const templates = {{ templates | tojson }};
 
-                // Update preview gif
-                UpdatePreviewGif();
+        function UpdateSecondDropdown() 
+        {
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            const templateSelect = document.getElementById("templateSelect");
+            const selectedType = animationTypeSelect.value;
+            
+            // Clear the second dropdown
+            templateSelect.innerHTML = "";
+            
+            // Populate the second dropdown based on the selected type
+            for (const [templateName, templateFile] of Object.entries(templates[selectedType])) {
+                const option = document.createElement("option");
+                option.value = templateName;
+                option.text = templateName;
+                templateSelect.appendChild(option);
             }
 
-            function UpdatePreviewGif()
+            // Update preview gif
+            UpdatePreviewGif();
+        }
+
+        function UpdatePreviewGif()
+        {
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            const templateSelect = document.getElementById("templateSelect");
+            const selectedType = animationTypeSelect.value;
+            const selectedTemplate = templateSelect.value;
+            const previewGif = document.getElementById("templatePreviewGIF");
+
+            const previewUrl = templates[selectedType][selectedTemplate]?.gifUrl;
+            if(previewUrl)
             {
-                const animationTypeSelect = document.getElementById("animationTypeSelect");
-                const templateSelect = document.getElementById("templateSelect");
-                const selectedType = animationTypeSelect.value;
-                const selectedTemplate = templateSelect.value;
-                const previewGif = document.getElementById("templatePreviewGIF");
-
-                const previewUrl = templates[selectedType][selectedTemplate]?.gifUrl;
-                if(previewUrl)
-                {
-                    previewGif.src = previewUrl;
-                    previewGif.style.display = "block";
-                }
-                else
-                {
-                    previewGif.style.display = "none";
-                }
+                previewGif.src = previewUrl;
+                previewGif.style.display = "block";
             }
-
+            else
+            {
+                previewGif.src = "";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () 
+        {
             // Initialize the second dropdown when the page loads
             UpdateSecondDropdown();
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
             // Update preview gif when template selected changes
             const templateSelect = document.getElementById("templateSelect");
-            templateSelect.addEventListener('change',UpdatePreviewGif);
+            templateSelect.addEventListener('change', UpdatePreviewGif);
             
 
             function updateIntensityValue(rangeID, valueID, inputID) {
