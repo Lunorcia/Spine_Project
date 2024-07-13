@@ -90,7 +90,7 @@ def index():
             t_data["gifUrl"] = (
                 url_for("static", filename=f"Image/PreviewGIF/{t_name}.gif"),
             )
-
+    save_template_mapping(mapping)
     return render_template(
         "anim.html", image_web_url="", gif_web_url="", templates=mapping
     )
