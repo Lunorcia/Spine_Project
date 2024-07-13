@@ -21,6 +21,7 @@
 
         const templates = {{ templates | tojson }};
         const existingTypes = Object.keys(templates);
+        const invalidChars = /[<>:"/\\|?*]/;
 
         function toggleNewTypeInput() 
         {
@@ -33,13 +34,20 @@
             {
                 newTypeInput.style.display = "block";
                 existingTypeSelect.disabled = true;
-                templateNameInput.oninput = checkNewTemplateName;
+                templateNameInput.oninput = function()
+                {
+                    checkTypeName();
+                    checkNewTemplateName();
+                };
             } 
             else 
             {
                 newTypeInput.style.display = "none";
                 existingTypeSelect.disabled = false;
-                templateNameInput.oninput = checkExistingTemplateName;
+                templateNameInput.oninput = function()
+                {
+                    checkExistingTemplateName();
+                };
             }
         }
 
@@ -62,32 +70,33 @@
 
         function checkNewTemplateName()
         {
-            const newTypeName = document.getElementById("newTemplateType").value;
             const templateName = document.getElementById("newTemplateName").value;
             const submitButton = document.getElementById("submitButton");
             const templateMessage = document.getElementById("templateMessage");
-            //template name in new type won't be repeated
+
+            if(invalidChars.test(templateName))
+            {
+                templateMessage.innerText = "模板名稱包含無效字符，請重新命名。\n";
+                submitButton.disabled = true;
+                return;
+            }
+            for(const type in templates)
+            {
+                if(templates[type][templateName])
+                {
+                    templateMessage.innerText = "這個模板名稱已經存在於某個動畫類型中，請重新命名。\n";
+                    submitButton.disabled = true;
+                    return;
+                }
+            }
+            //no conflict name
             templateMessage.innerText = "";
             submitButton.disabled = false;
         }
 
         function checkExistingTemplateName()
         {
-            const existingType = document.getElementById("existingTypeSelect").value;
-            const templateName = document.getElementById("newTemplateName").value;
-            const submitButton = document.getElementById("submitButton");
-            const templateMessage = document.getElementById("templateMessage");
-
-            if (templates[existingType] && templates[existingType][templateName])
-            {
-                templateMessage.innerText = "這個模板名稱在當前動畫類型中已經存在，請選擇其他名稱。\n";
-                submitButton.disabled = true;
-            }
-            else
-            {
-                templateMessage.innerText = "";
-                submitButton.disabled = false;
-            }
+            checkNewTemplateName();
         }
 
 
@@ -116,7 +125,7 @@
                 </div>
 
                 <label for="newTemplateName">模板名稱：</label>
-                <input type="text" id="newTemplateName" name="newTemplateName" required oninput="checkExistingTemplateName(); checkNewTemplateName();"><br><br>
+                <input type="text" id="newTemplateName" name="newTemplateName" required oninput="checkNewTemplateName();"><br><br>
                 <span id="templateMessage" style="color: red;"></span>
 
                 <label for="newTemplateFile">上傳模板文件 (.json)：</label>

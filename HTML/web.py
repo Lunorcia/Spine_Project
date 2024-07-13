@@ -15,6 +15,7 @@ PYTHON_FILE_FOLDER = os.path.join(SRC_PATH, "pythonFile")
 sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 
+LOCAL_SERVER_ADDR = "https://a094-219-70-173-170.ngrok-free.app/process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -145,7 +146,7 @@ def upload():
             print("Before send request.\n")
             img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                "https://a094-219-70-173-170.ngrok-free.app/process",
+                LOCAL_SERVER_ADDR,
                 files={
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
@@ -202,13 +203,8 @@ def add_template():
         preview_file_path = os.path.join(
             SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
         )
-
-        #
-        #
         # connect local server
         generate_preview_gif(file_path, preview_file_path)
-        #
-        #
 
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
@@ -232,7 +228,53 @@ def add_template():
 
 
 def generate_preview_gif(json_file_path, preview_gif_path):
-    0
+    preview_img = "preview_base.png"
+    preview_img_path = os.path.join(SRC_PATH, "static", "Image", preview_img)
+
+    animate.SetImgPath(preview_img_path)
+    animate.SetJsonFile(json_file_path)
+    animate.main()
+
+    # send file to local server
+    try:
+        with open(json_file_path, "rb") as json_file, open(
+            preview_img_path, "rb"
+        ) as img_file:
+            json_filename = os.path.basename(json_file_path)
+            img_filename = os.path.basename(preview_img_path)
+            print("Before send request.\n")
+            img_mime_type, _ = mimetypes.guess_type(img_filename)
+            response = requests.post(
+                LOCAL_SERVER_ADDR,
+                files={
+                    "json_file": (json_filename, json_file, "application/json"),
+                    "image_file": (img_filename, img_file, img_mime_type),
+                },
+                data={
+                    "intensityTranslate": 1.0,
+                    "intensityScale": 1.0,
+                    "intensityRotate": 1.0,
+                    "speed": 1.0,
+                },
+                timeout=180,
+            )
+
+            if response.status_code == 200:
+                # save gif file to the folder
+                output_gif_path = preview_gif_path
+                with open(output_gif_path, "wb") as gif_file:
+                    gif_file.write(response.content)
+                return
+            else:
+                print("Request failed.\n")
+                return jsonify({"error": "Failed to process image"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    # animate.py改圖片路徑(用As.png)
+    # 連線local server，傳模板json檔案和As.png給server
+    # server call spine，回傳gif
+    # 把gif存到static的PreviewGIF裡，檔名命名{preview_file_name}
 
 
 if __name__ == "__main__":
