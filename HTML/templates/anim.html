@@ -13,11 +13,13 @@
         }
         .image-container {
             flex: 1;
-            text-align: center;
+            text-align: left;
+            padding-left: 20px;
         }
         .image-container img {
             max-width: 100%;
             height: auto;
+            display: block;
         }
     </style>
     <script>
@@ -69,6 +71,9 @@
             UpdateSecondDropdown();
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
+            // Update preview gif when template selected changes
+            const templateSelect = document.getElementById("templateSelect");
+            templateSelect.addEventListener('change',UpdatePreviewGif);
             
 
             function updateIntensityValue(rangeID, valueID, inputID) {
@@ -140,7 +145,7 @@
                 </select><br><br>
 
                 <label for="templateSelect">選擇動畫模板：</label>
-                <select id="templateSelect" name="template" required>
+                <select id="templateSelect" name="template" required onchange="UpdatePreviewGif()">
                     <!-- This will be populated based on the first dropdown -->
                 </select><br><br>
 
