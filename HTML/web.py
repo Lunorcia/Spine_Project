@@ -154,7 +154,7 @@ def upload():
             print("Before send request.\n")
             img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                "https://0c4e-219-70-173-170.ngrok-free.app/process",
+                "https://a094-219-70-173-170.ngrok-free.app/process",
                 files={
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
