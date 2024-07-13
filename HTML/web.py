@@ -25,21 +25,58 @@ TEMPLATE_MAPPING_FILE = os.path.join(SRC_PATH, "template_mapping.json")
 
 TEMPLATE_MAPPING = {
     "Only Scale": {
-        "Sym_bomp_01": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_01.json"),
-        "Sym_bomp_02": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_02.json"),
-        "Sym_Tip_01": os.path.join(JSON_FILE_FOLDER, "Sym_Tip_01.json"),
+        "Sym_bomp_01": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_01.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_01.gif"),
+        },
+        "Sym_bomp_02": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_02.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_02.gif"),
+        },
+        "Sym_Tip_01": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_Tip_01.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_Tip_01.gif"),
+        },
     },
     "Scale & rotate": {
-        "01win": os.path.join(JSON_FILE_FOLDER, "01win.json"),
-        "Sym_Cascading_01": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_01.json"),
-        "Sym_bomp_03": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_03.json"),
-        "Sym_bomp_06": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_06.json"),
-        "Sym_bomp_07": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_07.json"),
+        "01win": {
+            "file": os.path.join(JSON_FILE_FOLDER, "01win.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/01win.gif"),
+        },
+        "Sym_Cascading_01": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_01.json"),
+            "gifUrl": url_for(
+                "static", filename="Image/PreviewGIF/Sym_Cascading_01.gif"
+            ),
+        },
+        "Sym_bomp_03": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_03.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_03.gif"),
+        },
+        "Sym_bomp_06": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_06.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_06.gif"),
+        },
+        "Sym_bomp_07": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_07.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_07.gif"),
+        },
     },
     "Scale & translate": {
-        "Sym_Cascading_02": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_02.json"),
-        "Sym_bomp_04": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_04.json"),
-        "Sym_bomp_05": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_05.json"),
+        "Sym_Cascading_02": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_02.json"),
+            "gifUrl": url_for(
+                "static", filename="Image/PreviewGIF/Sym_Cascading_02.gif"
+            ),
+        },
+        "Sym_bomp_04": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_04.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_04.gif"),
+        },
+        "Sym_bomp_05": {
+            "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_05.json"),
+            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_05.gif"),
+        },
     },
 }
 
@@ -92,7 +129,8 @@ def upload():
     # choose template json
     mapping = load_template_mapping()
     type_dict = mapping.get(selected_type)
-    template_json_path = type_dict.get(selected_template)
+    template_data = type_dict.get(selected_template)
+    template_json_path = template_data.get("file")
     saved_json_path = ""
     if not template_json_path or not os.path.exists(template_json_path):
         print("template doesn't exist\n")
@@ -156,6 +194,7 @@ def add_template():
     new_type = request.form.get("newTemplateType")
     new_template_name = request.form["newTemplateName"]
     new_template_file = request.files["newTemplateFile"]
+    # new_template_preview
 
     if new_type_checkbox and new_type:
         animation_type = new_type
@@ -167,12 +206,34 @@ def add_template():
         file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, new_template_file.filename)
         new_template_file.save(file_path)
 
+        # generate preview gif
+        preview_file_name = f"{new_template_name}_preview.gif"
+        preview_file_path = os.path.join(
+            SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
+        )
+        #
+        #
+        #
+        #
+        # connect local server
+        generate_preview_gif(file_path, preview_file_path)
+        #
+        #
+        #
+        #
+
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
+        new_template_data = {
+            "file": file_path,
+            "gifUrl": url_for(
+                "static", filename=f"Image/PreviewGIF/{preview_file_name}"
+            ),
+        }
         if animation_type in mapping:
-            mapping[animation_type][new_template_name] = file_path
+            mapping[animation_type][new_template_name] = new_template_data
         else:
-            mapping[animation_type] = {new_template_name: file_path}
+            mapping[animation_type] = {new_template_name: new_template_data}
 
         save_template_mapping(mapping)
 
@@ -180,6 +241,10 @@ def add_template():
 
     else:
         return "Invalid file type. Please upload a .json file.", 400
+
+
+def generate_preview_gif(json_file_path, preview_gif_path):
+    0
 
 
 if __name__ == "__main__":

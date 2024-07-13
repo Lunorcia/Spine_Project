@@ -40,7 +40,31 @@
                     option.text = templateName;
                     templateSelect.appendChild(option);
                 }
+
+                // Update preview gif
+                UpdatePreviewGif();
             }
+
+            function UpdatePreviewGif()
+            {
+                const animationTypeSelect = document.getElementById("animationTypeSelect");
+                const templateSelect = document.getElementById("templateSelect");
+                const selectedType = animationTypeSelect.value;
+                const selectedTemplate = templateSelect.value;
+                const previewGif = document.getElementById("templatePreviewGIF");
+
+                const previewUrl = templates[selectedType][selectedTemplate]?.gifUrl;
+                if(previewUrl)
+                {
+                    previewGif.src = previewUrl;
+                    previewGif.style.display = "block";
+                }
+                else
+                {
+                    previewGif.style.display = "none";
+                }
+            }
+
             // Initialize the second dropdown when the page loads
             UpdateSecondDropdown();
             const animationTypeSelect = document.getElementById("animationTypeSelect");
@@ -144,6 +168,9 @@
             </form><br>
         </div>
         <div class="image-container">
+            <h2>Template Preview</h2>
+            <img id="templatePreviewGIF" src="" alt="Template Preview" style="display:none;">
+            
             <h2>Uploaded Image</h2>
             <img id="animationImage" src="{{url_for('static',filename=image_web_url)}}" alt="Uploaded Image">
 
