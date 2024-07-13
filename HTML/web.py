@@ -27,55 +27,40 @@ TEMPLATE_MAPPING = {
     "Only Scale": {
         "Sym_bomp_01": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_01.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_01.gif"),
         },
         "Sym_bomp_02": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_02.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_02.gif"),
         },
         "Sym_Tip_01": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_Tip_01.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_Tip_01.gif"),
         },
     },
     "Scale & rotate": {
         "01win": {
             "file": os.path.join(JSON_FILE_FOLDER, "01win.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/01win.gif"),
         },
         "Sym_Cascading_01": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_01.json"),
-            "gifUrl": url_for(
-                "static", filename="Image/PreviewGIF/Sym_Cascading_01.gif"
-            ),
         },
         "Sym_bomp_03": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_03.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_03.gif"),
         },
         "Sym_bomp_06": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_06.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_06.gif"),
         },
         "Sym_bomp_07": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_07.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_07.gif"),
         },
     },
     "Scale & translate": {
         "Sym_Cascading_02": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_Cascading_02.json"),
-            "gifUrl": url_for(
-                "static", filename="Image/PreviewGIF/Sym_Cascading_02.gif"
-            ),
         },
         "Sym_bomp_04": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_04.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_04.gif"),
         },
         "Sym_bomp_05": {
             "file": os.path.join(JSON_FILE_FOLDER, "Sym_bomp_05.json"),
-            "gifUrl": url_for("static", filename="Image/PreviewGIF/Sym_bomp_05.gif"),
         },
     },
 }
@@ -99,6 +84,12 @@ def save_template_mapping(mapping):
 @app.route("/")
 def index():
     mapping = load_template_mapping()
+    for type, templates in mapping.items():
+        for t_name, t_data in templates.items():
+            t_data["gifUrl"] = (
+                url_for("static", filename=f"Image/PreviewGIF/{t_name}.gif"),
+            )
+
     return render_template(
         "anim.html", image_web_url="", gif_web_url="", templates=mapping
     )
@@ -207,18 +198,15 @@ def add_template():
         new_template_file.save(file_path)
 
         # generate preview gif
-        preview_file_name = f"{new_template_name}_preview.gif"
+        preview_file_name = f"{new_template_name}.gif"
         preview_file_path = os.path.join(
             SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
         )
-        #
-        #
+
         #
         #
         # connect local server
         generate_preview_gif(file_path, preview_file_path)
-        #
-        #
         #
         #
 
