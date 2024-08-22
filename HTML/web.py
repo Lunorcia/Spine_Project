@@ -14,6 +14,7 @@ sys.path.append(str(SRC_PATH))  # ensure SRC_PATH is in sys.path
 PYTHON_FILE_FOLDER = os.path.join(SRC_PATH, "pythonFile")
 sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
+import pythonFile.enlarge_mesh as enlargeMesh
 
 LOCAL_SERVER_ADDR = "https://a094-219-70-173-170.ngrok-free.app/process"
 
@@ -100,6 +101,11 @@ def index():
 def add_template_page():
     mapping = load_template_mapping()
     return render_template("add_template.html", templates=mapping)
+
+
+@app.route("/adjust_template_page")
+def adjust_template_page():
+    return render_template("adjust_template.html")
 
 
 @app.route("/upload", methods=["POST"])
@@ -275,6 +281,32 @@ def generate_preview_gif(json_file_path, preview_gif_path):
     # 連線local server，傳模板json檔案和As.png給server
     # server call spine，回傳gif
     # 把gif存到static的PreviewGIF裡，檔名命名{preview_file_name}
+
+
+@app.route("/adjust_template", methods=["POST"])
+def adjust_template():
+    # 取得表單上傳的文件
+    uploaded_image = request.files["image_file"]
+    uploaded_json = request.files["json_file"]
+    scale_factor = float(request.form.get("scale_factor", 2.0))
+    if not uploaded_image or not uploaded_image:
+        return "Please upload both JSON and image files then try again.", 400
+
+    # 將檔案儲存到伺服器
+    saved_img_path = os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename)
+    saved_json_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, uploaded_json.filename)
+    uploaded_image.save(saved_img_path)
+    uploaded_json.save(saved_json_path)
+
+    enlargeMesh.SetImgPath(saved_img_path)
+    enlargeMesh.SetJsonPath(saved_json_path)
+    enlargeMesh.SetScale(scale_factor)
+    modified_json_file = enlargeMesh.main()
+    # code todo:
+    # 存檔新json
+    # 回傳json檔案在網頁讓使用者下載(或儲存模板)或選擇繼續轉成gif輸出
+
+    # todo: 動畫AKQJ列表
 
 
 if __name__ == "__main__":

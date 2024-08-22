@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>調整模板</title>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () 
+        {
+            const scaleRange = document.getElementById("scale_range");
+            const scaleValue = document.getElementById("scale_value");
+            const scaleInput = document.getElementById("scale_factor");
+            
+            scaleRange.addEventListener('input', function(){
+                scaleValue.textContent = scaleRange.value;
+                scaleInput.value = scaleRange.value;
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Adjust Template</h1>
+    <form action="/adjust_template" method="post" enctype="multipart/form-data">
+        <label for="json_file">上傳模板文件(.json):</label>
+        <input type="file" id="json_file" name="json_file" accept=".json" required><br><br>
+        
+        <label for="image_file">上傳圖片(.png):</label>
+        <input type="file" id="image_file" name="image_file" accept=".png" required><br><br>
+        
+        <label for="scale_range">網格調整倍數:</label>
+        <input type="range" id="scale_range" name="scale_range" min="1.0" max="3.0" step="0.1" value="2.0">
+        <span id="scale_value">2.0</span>
+        <input type="hidden" id="scale_factor" name="scale_factor" value="2.0"><br><br>
+
+        <input type="submit" value="Adjust Template">
+    </form>
+</body>
+</html>
