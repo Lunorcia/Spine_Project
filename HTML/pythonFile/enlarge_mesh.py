@@ -202,7 +202,7 @@ def main():
     with open(output_json_path, "w") as file:
         json.dump(spine_data, file, indent=4)
     print(f"Json file saved to: {output_json_path}")
-    return output_json_path
+    return output_json_path, output_img_path
 
 
 if __name__ == "__main__":

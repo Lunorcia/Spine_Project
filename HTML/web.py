@@ -301,22 +301,38 @@ def adjust_template():
     enlargeMesh.SetImgPath(saved_img_path)
     enlargeMesh.SetJsonPath(saved_json_path)
     enlargeMesh.SetScale(scale_factor)
-    modified_json_file = enlargeMesh.main()
+    modified_json_file, modified_img_file = enlargeMesh.main()
 
     json_download_url = url_for(
-        "download_json", filename=os.path.basename(modified_json_file)
+        "download_file", folder="json", filename=os.path.basename(modified_json_file)
     )
-    return render_template("adjust_template.html", json_download_link=json_download_url)
+    img_download_url = url_for(
+        "download_file", folder="img", filename=os.path.basename(modified_img_file)
+    )
+    return render_template(
+        "adjust_template.html",
+        json_download_link=json_download_url,
+        img_download_link=img_download_url,
+    )
+
     # code todo:
     # 存檔新json
-    # 回傳json檔案在網頁讓使用者下載(或儲存模板)或選擇繼續轉成gif輸出
+    # 回傳json檔案在網頁讓使用者下載或選擇繼續轉成gif輸出
+
+    # 讓使用者下載放大邊緣後的圖片
+    # 產出json回傳，要一起產出GIF
 
     # todo: 動畫AKQJ列表
 
 
-@app.route("/download_json/<filename>")
-def download_json(filename):
-    file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, filename)
+@app.route("/download/<folder>/<filename>")
+def download_file(folder, filename):
+    if folder == "json":
+        file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, filename)
+    elif folder == "img":
+        file_path = os.path.join(UPLOAD_IMG_FOLDER, filename)
+    else:
+        return "Invalid folder", 400
     return send_file(file_path, as_attachment=True)
 
 

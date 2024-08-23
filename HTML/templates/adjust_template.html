@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>調整模板</title>
     <style>
-        .json-download{
+        .file-download{
             text-align: center;
             margin-top: 20px;
         }
-        .json-download img{
+        .file-download img{
             width: 50px;
             height: 50px;
             cursor: pointer;
@@ -32,7 +32,7 @@
     </script>
 </head>
 <body>
-    <h1>Adjust Template</h1>
+    <h1>調整模板網格</h1>
     <div class="form-container">
         <form action="/adjust_template" method="post" enctype="multipart/form-data">
             <label for="json_file">上傳模板文件(.json):</label>
@@ -49,15 +49,24 @@
             <input type="submit" value="Adjust Template">
         </form>
     </div>
-    <div class="json-download">
+    <div class="file-download">
         {% if json_download_link %}
         <a href="{{json_download_link}}" download>
-            <img src="{{url_for('static',filename='Image/download_icon.png')}}">
+            <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
         </a>
-        <p>點擊下載調整後的模板(.json)</p>
-        {%else%}
+        <p>點擊圖示下載調整後的模板(.json)</p>
+        {% else %}
         <p>尚無調整後的模板</p>
-        {%endif%}
+        {% endif %}
+
+        {% if img_download_link %}
+        <a href="{{img_download_link}}" download>
+            <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
+        </a>
+        <p>點擊圖示下載調整後的圖片(.png)</p>
+        {% else %}
+        <p>尚無調整後的圖片</p>
+        {% endif %}
     </div>
 </body>
 </html>
