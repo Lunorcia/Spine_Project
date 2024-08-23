@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>調整模板</title>
     <style>
-        .file-download{
+        .file-download {
             text-align: center;
             margin-top: 20px;
         }
-        .file-download img{
+        .download-container {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .file-download img {
             width: 50px;
             height: 50px;
             cursor: pointer;
         }
         #animationGIF {
-            width: 500px;
+            max-width: 500px;
+            width: 100%;
             height: auto;
             margin-bottom: 10px;
         }
@@ -59,23 +64,27 @@
             <img id="animationGIF" src="{{gif_web_url}}" alt="Generated Animation"><br><br>
         {% endif %}
 
-        {% if json_download_link %}
-        <a href="{{json_download_link}}" download>
-            <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
-        </a>
-        <p>點擊圖示下載調整後的模板(.json)</p><br><br>
-        {% else %}
-        <p>尚無調整後的模板</p><br><br>
-        {% endif %}
+        <div class="download-container">
+            {% if json_download_link %}
+            <a href="{{json_download_link}}" download>
+                <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
+            </a>
+            <p>點擊圖示下載調整後的模板(.json)</p><br><br>
+            {% else %}
+            <p>尚無調整後的模板</p><br><br>
+            {% endif %}
+        </div>
 
-        {% if img_download_link %}
-        <a href="{{img_download_link}}" download>
-            <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
-        </a>
-        <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
-        {% else %}
-        <p>尚無調整後的圖片</p><br><br>
-        {% endif %}
+        <div class="download-container">
+            {% if img_download_link %}
+            <a href="{{img_download_link}}" download>
+                <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
+            </a>
+            <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
+            {% else %}
+            <p>尚無調整後的圖片</p><br><br>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
