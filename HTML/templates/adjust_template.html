@@ -50,22 +50,26 @@
         </form>
     </div>
     <div class="file-download">
+        {% if gif_web_url %}
+            <img id="animationGIF" src="{{gif_web_url}}" alt="Generated Animation"><br><br>
+        {% endif %}
+
         {% if json_download_link %}
         <a href="{{json_download_link}}" download>
             <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
         </a>
-        <p>點擊圖示下載調整後的模板(.json)</p>
+        <p>點擊圖示下載調整後的模板(.json)</p><br><br>
         {% else %}
-        <p>尚無調整後的模板</p>
+        <p>尚無調整後的模板</p><br><br>
         {% endif %}
 
         {% if img_download_link %}
         <a href="{{img_download_link}}" download>
             <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
         </a>
-        <p>點擊圖示下載調整後的圖片(.png)</p>
+        <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
         {% else %}
-        <p>尚無調整後的圖片</p>
+        <p>尚無調整後的圖片</p><br><br>
         {% endif %}
     </div>
 </body>

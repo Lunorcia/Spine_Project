@@ -16,7 +16,8 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_ADDR = "https://51c6-219-70-173-170.ngrok-free.app/process"
+LOCAL_SERVER_MAIN = "https://1430-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://1430-219-70-173-170.ngrok-free.app/mesh_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -152,7 +153,7 @@ def upload():
             print("Before send request.\n")
             img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                LOCAL_SERVER_ADDR,
+                LOCAL_SERVER_MAIN,
                 files={
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
@@ -251,7 +252,7 @@ def generate_preview_gif(json_file_path, preview_gif_path):
             print("Before send request.\n")
             img_mime_type, _ = mimetypes.guess_type(img_filename)
             response = requests.post(
-                LOCAL_SERVER_ADDR,
+                LOCAL_SERVER_MAIN,
                 files={
                     "json_file": (json_filename, json_file, "application/json"),
                     "image_file": (img_filename, img_file, img_mime_type),
@@ -309,20 +310,43 @@ def adjust_template():
     img_download_url = url_for(
         "download_file", folder="img", filename=os.path.basename(modified_img_file)
     )
-    return render_template(
-        "adjust_template.html",
-        json_download_link=json_download_url,
-        img_download_link=img_download_url,
-    )
 
-    # code todo:
-    # 存檔新json
-    # 回傳json檔案在網頁讓使用者下載或選擇繼續轉成gif輸出
+    # send file to local server
+    try:
+        with open(modified_json_file, "rb") as json_file, open(
+            modified_img_file, "rb"
+        ) as img_file:
+            json_filename = os.path.basename(modified_json_file)
+            img_filename = os.path.basename(modified_img_file)
+            print("Before send request.\n")
+            img_mime_type, _ = mimetypes.guess_type(img_filename)
+            response = requests.post(
+                LOCAL_SERVER_MESH,
+                files={
+                    "json_file": (json_filename, json_file, "application/json"),
+                    "image_file": (img_filename, img_file, img_mime_type),
+                },
+                timeout=180,
+            )
 
-    # 讓使用者下載放大邊緣後的圖片
-    # 產出json回傳，要一起產出GIF
+            if response.status_code == 200:
+                # save gif file to the folder
+                output_gif_path = os.path.join(UPLOAD_IMG_FOLDER, "output_gif.gif")
+                with open(output_gif_path, "wb") as gif_file:
+                    gif_file.write(response.content)
 
-    # todo: 動畫AKQJ列表
+                gif_url = url_for("static", filename="/Image/Saved/output_gif.gif")
+                return render_template(
+                    "adjust_template.html",
+                    gif_web_url=gif_url,
+                    json_download_link=json_download_url,
+                    img_download_link=img_download_url,
+                )
+            else:
+                print("Request failed.\n")
+                return jsonify({"error": "Failed to process image"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/download/<folder>/<filename>")
