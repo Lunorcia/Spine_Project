@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, jsonify
+from flask import Flask, render_template, request, url_for, redirect, jsonify, send_file
 import pathlib
 import sys
 import os
@@ -16,7 +16,7 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_ADDR = "https://a094-219-70-173-170.ngrok-free.app/process"
+LOCAL_SERVER_ADDR = "https://51c6-219-70-173-170.ngrok-free.app/process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -302,11 +302,22 @@ def adjust_template():
     enlargeMesh.SetJsonPath(saved_json_path)
     enlargeMesh.SetScale(scale_factor)
     modified_json_file = enlargeMesh.main()
+
+    json_download_url = url_for(
+        "download_json", filename=os.path.basename(modified_json_file)
+    )
+    return render_template("adjust_template.html", json_download_link=json_download_url)
     # code todo:
     # 存檔新json
     # 回傳json檔案在網頁讓使用者下載(或儲存模板)或選擇繼續轉成gif輸出
 
     # todo: 動畫AKQJ列表
+
+
+@app.route("/download_json/<filename>")
+def download_json(filename):
+    file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, filename)
+    return send_file(file_path, as_attachment=True)
 
 
 if __name__ == "__main__":
