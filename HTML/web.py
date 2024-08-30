@@ -101,7 +101,11 @@ def index():
 @app.route("/add_template_page")
 def add_template_page():
     mapping = load_template_mapping()
-    return render_template("add_template.html", templates=mapping)
+    # if adjust_template_page send json file path, return file to add_template_page
+    new_json_template = request.args.get("json_path")
+    return render_template(
+        "add_template.html", templates=mapping, json_path=new_json_template
+    )
 
 
 @app.route("/adjust_template_page")

@@ -13,6 +13,9 @@
             display: inline-block;
             margin-right: 20px;
         }
+        .download-container img {
+            cursor: pointer;
+        }
         .file-download img {
             width: 50px;
             height: 50px;
@@ -42,6 +45,10 @@
     </script>
 </head>
 <body>
+    <a href="{{ url_for('index') }}">
+        <img src="{{url_for('static',filename='Image/back_icon.png')}}" alt="Back to homepage" style="width:30px; height:30px; position: absolute; top: 10px; left: 10px; cursor: pointer;">
+    </a>
+
     <h1>調整模板網格</h1>
     <div class="form-container">
         <form action="/adjust_template" method="post" enctype="multipart/form-data">
@@ -83,6 +90,14 @@
             <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
             {% else %}
             <p>尚無調整後的圖片</p><br><br>
+            {% endif %}
+        </div>
+
+        <div class="add-template-container">
+            {% if json_download_link %}
+            <a href="{{url_for('add_template_page', json_path=json_download_link)}}">
+                <button type="button">添加為新模板</button>
+            </a>
             {% endif %}
         </div>
     </div>
