@@ -267,6 +267,9 @@ def save_json_template(
     else:
         animation_type = existing_type
 
+    print(f"json at {json_file_path}")
+    print(f"gif at {gif_file_path}")
+
     # json_file_path already in UPLOADED_JSON_FILE_FOLDER
     # save preview gif
     preview_file_name = f"{new_template_name}.gif"
@@ -275,6 +278,7 @@ def save_json_template(
     )
     if os.path.exists(gif_file_path):
         # copy gif from gif_path to preview_path
+        print(f"copying gif from {gif_file_path} to {preview_file_path}")
         shutil.copy(gif_file_path, preview_file_path)
     else:
         print("gif file path doesn't exist.")
