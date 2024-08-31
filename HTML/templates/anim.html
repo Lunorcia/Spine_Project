@@ -179,10 +179,18 @@
             <img id="templatePreviewGIF" src="" alt="Template Preview" style="display:none;">
             
             <h2>Uploaded Image</h2>
-            <img id="animationImage" src="{{url_for('static',filename=image_web_url)}}" alt="Uploaded Image">
+            {% if image_web_url %}
+                <img id="animationImage" src="{{url_for('static',filename=image_web_url)}}" alt="Uploaded Image">
+            {% else %}
+                <p>No image uploaded yet.</p>
+            {% endif %}
 
             <h2>Animation GIF</h2>
-            <img id="animationGIF" src="{{url_for('static',filename=gif_web_url)}}" alt="Generated Animation">
+            {% if gif_web_url %}
+                <img id="animationGIF" src="{{url_for('static',filename=gif_web_url)}}" alt="Generated Animation">
+            {% else %}
+                <p>No GIF generated yet.</p>
+            {% endif %}
         </div>
     </div>
 </body>

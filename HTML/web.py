@@ -224,6 +224,19 @@ def add_template():
         file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, new_template_file.filename)
         new_template_file.save(file_path)
 
+        if new_template_gif:  # doesn't need to generate gif
+            # save gif file to server
+            gif_file_path = os.path.join(UPLOAD_IMG_FOLDER, new_template_gif.filename)
+            new_template_gif.save(gif_file_path)
+            return save_json_template(
+                existing_type,
+                new_type_checkbox,
+                new_type,
+                new_template_name,
+                file_path,
+                gif_file_path,
+            )
+
         # generate preview gif
         preview_file_name = f"{new_template_name}.gif"
         preview_file_path = os.path.join(
@@ -269,8 +282,6 @@ def save_json_template(
 
     json_file_path = os.path.abspath(json_file_path)
     gif_file_path = os.path.abspath(gif_file_path)
-    print(f"(B)json at {json_file_path}")
-    print(f"(B)gif at {gif_file_path}")
 
     # json has been in UPLOADED_JSON_FILE_FOLDER
     # save preview gif
@@ -299,8 +310,6 @@ def save_json_template(
 
     save_template_mapping(mapping)
 
-    print(f"(E)json at {json_file_path}")
-    print(f"(E)gif at {gif_file_path}")
     return redirect(url_for("index"))
 
 
