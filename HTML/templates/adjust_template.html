@@ -22,9 +22,9 @@
             cursor: pointer;
         }
         #animationGIF {
-            max-width: 500px;
-            width: 100%;
-            height: auto;
+            max-height: 500px;
+            width: auto;
+            height: 100%;
             margin-bottom: 10px;
         }
 
@@ -63,7 +63,7 @@
             <span id="scale_value">2.0</span>
             <input type="hidden" id="scale_factor" name="scale_factor" value="2.0"><br><br>
 
-            <input type="submit" value="Adjust Template">
+            <input type="submit" value="確認調整">
         </form>
     </div>
     <div class="file-download">
@@ -78,7 +78,7 @@
             </a>
             <p>點擊圖示下載調整後的模板(.json)</p><br><br>
             {% else %}
-            <p>尚無調整後的模板</p><br><br>
+            <p>No template adjusted yet.</p><br><br>
             {% endif %}
         </div>
 
@@ -89,7 +89,7 @@
             </a>
             <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
             {% else %}
-            <p>尚無調整後的圖片</p><br><br>
+            <p>No image adjusted yet.</p><br><br>
             {% endif %}
         </div>
 
