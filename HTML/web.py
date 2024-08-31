@@ -5,6 +5,7 @@ import os
 import requests
 import mimetypes
 import json
+import shutil
 
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
@@ -196,9 +197,23 @@ def add_template():
     new_type_checkbox = request.form.get("newTypeCheckbox")
     new_type = request.form.get("newTemplateType")
     new_template_name = request.form["newTemplateName"]
-    new_template_file = request.files["newTemplateFile"]
-    # new_template_preview
+    new_template_file = request.files.get("newTemplateFile")
+    new_template_gif = request.files.get("newTemplateGif")
+    json_file_path = request.form.get("jsonFilePath")
+    gif_file_path = request.form.get("gifFilePath")
 
+    if json_file_path:
+        # if web send json file's path, then do not generate gif
+        return save_json_template(
+            existing_type,
+            new_type_checkbox,
+            new_type,
+            new_template_name,
+            json_file_path,
+            gif_file_path,
+        )
+
+    # new_template_preview
     if new_type_checkbox and new_type:
         animation_type = new_type
     else:
@@ -236,6 +251,48 @@ def add_template():
 
     else:
         return "Invalid file type. Please upload a .json file.", 400
+
+
+# if doesn't need to generate gif, call this function
+def save_json_template(
+    existing_type,
+    new_type_checkbox,
+    new_type,
+    new_template_name,
+    json_file_path,
+    gif_file_path,
+):
+    if new_type_checkbox and new_type:
+        animation_type = new_type
+    else:
+        animation_type = existing_type
+
+    # json_file_path already in UPLOADED_JSON_FILE_FOLDER
+    # save preview gif
+    preview_file_name = f"{new_template_name}.gif"
+    preview_file_path = os.path.join(
+        SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
+    )
+    if os.path.exists(gif_file_path):
+        # copy gif from gif_path to preview_path
+        shutil.copy(gif_file_path, preview_file_path)
+    else:
+        print("gif file path doesn't exist.")
+
+    # Update the TEMPLATE_MAPPING
+    mapping = load_template_mapping()
+    new_template_data = {
+        "file": json_file_path,
+        "gifUrl": url_for("static", filename=f"Image/PreviewGIF/{preview_file_name}"),
+    }
+    if animation_type in mapping:
+        mapping[animation_type][new_template_name] = new_template_data
+    else:
+        mapping[animation_type] = {new_template_name: new_template_data}
+
+    save_template_mapping(mapping)
+
+    return redirect(url_for("index"))
 
 
 def generate_preview_gif(json_file_path, preview_gif_path):

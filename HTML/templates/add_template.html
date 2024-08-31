@@ -105,13 +105,33 @@
         {
             // get json_path from adjust_template_page
             const urlParams = new URLSearchParams(window.location.search);
-            const jsonPath=urlParams.get('json_path');
-            // if json file from adjust_template_page exist, set it into newTemplateFile(upload)
+            const jsonPath = urlParams.get('json_path');
+            const templateFileInput = document.getElementById("newTemplateFile");
+            const gifPath = urlParams.get('gif_path');
+            const templateGifInput = document.getElementById("newTemplateGif");
+            // if json file from adjust_template_page exist, set it into jsonFilePathInput and disable upload function
             if (jsonPath)
             {
-                const templateFileInput = document.getElementById("newTemplateFile");
-                templateFileInput.value = jsonPath;
+                const jsonFilePathInput = document.getElementById("jsonFilePath");
+                jsonFilePathInput.value = jsonPath;
+                templateFileInput.disabled = true;
             }
+            else
+            {
+                templateFileInput.disabled = false;
+            }
+
+            if (gifPath)
+            {
+                const gifFilePathInput = document.getElementById("gifFilePath");
+                gifFilePathInput.value = gifPath;
+                templateGifInput.disabled = true;
+            }
+            else
+            {
+                templateGifInput.disabled = false;
+            }
+
         });
 
 
@@ -119,7 +139,7 @@
 </head>
 <body>
     <a href="{{ url_for('index') }}">
-        <img src="{{url_for('static',filename='Image/back_icon.png')}}" alt="Back to homepage" style="width:30px; height:30px; position: absolute; top: 20px; left: 10px; cursor: pointer;">
+        <img src="{{url_for('static',filename='Image/back_icon.png')}}" alt="Back to homepage" style="width:30px; height:30px; position: absolute; margin-bottom:10px; top: 10px; left: 10px; cursor: pointer;">
     </a>
 
     <h1>新增模板</h1>
@@ -147,8 +167,15 @@
                 <input type="text" id="newTemplateName" name="newTemplateName" required oninput="checkNewTemplateName();"><br><br>
                 <span id="templateMessage" style="color: red;"></span>
 
+
+                <input type="hidden" id="jsonFilePath" name="jsonFilePath">
                 <label for="newTemplateFile">上傳模板文件 (.json)：</label>
                 <input type="file" id="newTemplateFile" name="newTemplateFile" accept=".json" required><br><br>
+
+                <input type="hidden" id="gifFilePath" name="gifFilePath">
+                <label for="newTemplateGif">上傳預覽GIF (optional)：</label>
+                <p>未自行上傳GIF則由網頁自動進行生成</p>
+                <input type="file" id="newTemplateGif" name="newTemplateGif" accept=".gif"><br><br>
 
                 <input type="submit" id="submitButton" value="確認新增">
             </form><br>
