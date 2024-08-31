@@ -417,6 +417,8 @@ def adjust_template():
                     gif_web_url=gif_url,
                     json_download_link=json_download_url,
                     img_download_link=img_download_url,
+                    json_file_path=modified_json_file,
+                    gif_file_path=output_gif_path,
                 )
             else:
                 print("Request failed.\n")

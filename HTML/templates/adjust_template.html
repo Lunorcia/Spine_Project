@@ -95,7 +95,7 @@
 
         <div class="add-template-container">
             {% if json_download_link and gif_web_url %}
-            <a href="{{url_for('add_template_page', json_path=json_download_link, gif_path=gif_web_url)}}">
+            <a href="{{url_for('add_template_page', json_path=json_file_path, gif_path=gif_file_path)}}">
                 <button type="button">添加為新模板</button>
             </a>
             {% endif %}
