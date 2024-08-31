@@ -272,13 +272,7 @@ def save_json_template(
     print(f"(B)json at {json_file_path}")
     print(f"(B)gif at {gif_file_path}")
 
-    # save json
-    json_file_name = os.path.basename(json_file_path)
-    json_new_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, json_file_name)
-    shutil.copy(json_file_path, json_new_path)
-    print(f"copying gif from {gif_file_path} to {preview_file_path}")
-    json_file_path = json_new_path
-
+    # json has been in UPLOADED_JSON_FILE_FOLDER
     # save preview gif
     preview_file_name = f"{new_template_name}.gif"
     preview_file_path = os.path.join(
