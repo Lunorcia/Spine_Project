@@ -333,7 +333,13 @@ def main():
     print("animate parse complete")
 
     json_stringify.OutputJson(
-        bonesList, slotsList, animationList, img_folder_path, img_file_name, jsonPath
+        jData,
+        bonesList,
+        slotsList,
+        animationList,
+        img_folder_path,
+        img_file_name,
+        jsonPath,
     )
     print("json output complete")
 

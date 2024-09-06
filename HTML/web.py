@@ -17,8 +17,8 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://9b7d-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://9b7d-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAIN = "https://6da4-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://6da4-219-70-173-170.ngrok-free.app/mesh_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload

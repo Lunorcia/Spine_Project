@@ -31,18 +31,23 @@ def GenerateRandomStr(length=11):
     return random_string
 
 
-def SkeletonInfo(img_folder_path):
+def SkeletonInfo(img_folder_path, j_skeleton):
 
     hash_value = GenerateHash(GenerateRandomStr())
-    skeleton = {
-        "hash": hash_value,
-        "spine": "4.2.20",
-        "images": f"{img_folder_path}",
-        "audio": "",
-    }
-    return skeleton
+    j_skeleton["hash"] = hash_value
+    j_skeleton["spine"] = "4.2.20"
+    j_skeleton["images"] = f"{img_folder_path}"
+    j_skeleton["audio"] = ""
+    # skeleton = {
+    #     "hash": hash_value,
+    #     "spine": "4.2.20",
+    #     "images": f"{img_folder_path}",
+    #     "audio": "",
+    # }
+    return j_skeleton
 
 
+### no use ###
 def BonesInfo(bonesList):
 
     bones = []
@@ -64,33 +69,53 @@ def BonesInfo(bonesList):
     return bones
 
 
-def SlotsInfo(file_name, slotsList):
+def SlotsInfo(file_name, slotsList, j_slots):
 
-    slots = []
-    for sInfo in slotsList:
-        s = {"name": sInfo.name, "bone": sInfo.bone, "attachment": f"{file_name}"}
-        slots.append(s)
+    # change slot's attachment
+    for slot in j_slots:
+        if "attachment" in slot:
+            old_attachment = slot["attachment"]
+            new_attachment = file_name
+            slot["attachment"] = new_attachment
+            # print(f"Update attachment in slot from {old_attachment} to {new_attachment}")
 
-    # slots = [{"name": "sym", "bone": "M1", "attachment": f"{file_name}"}]
-    return slots
+    # slots = []
+    # for sInfo in slotsList:
+    #     s = {"name": sInfo.name, "bone": sInfo.bone, "attachment": f"{file_name}"}
+    #     slots.append(s)
+
+    # sample slots = [{"name": "sym", "bone": "M1", "attachment": f"{file_name}"}]
+    return j_slots
 
 
-def SkinsInfo(img_folder_path, file_name, slotsList):
+def SkinsInfo(img_folder_path, file_name, j_skins):
 
     file_path = os.path.join(img_folder_path, file_name)
     img = cv2.imread(file_path)
     height, width = img.shape[:2]
-    skins = [
-        {
-            "name": "default",
-            "attachments": {
-                f"{slotsList[0].name}": {
-                    f"{file_name}": {"width": width, "height": height}
-                }
-            },
-        }
-    ]
-    return skins
+
+    # change skins' attachment
+    img_name = file_name
+    for skin in j_skins:
+        if "attachments" in skin:
+            for attachment_key, attachment in skin["attachments"].items():
+                for old_attachment_name in list(attachment.keys()):
+                    attachment[img_name] = attachment.pop(old_attachment_name)
+                    attachment[img_name]["width"] = width
+                    attachment[img_name]["height"] = height
+                    # print(f"Update attachment in skin from {old_attachment_name} to {img_name}")
+
+    # skins = [
+    #     {
+    #         "name": "default",
+    #         "attachments": {
+    #             f"{slotsList[0].name}": {
+    #                 f"{file_name}": {"width": width, "height": height}
+    #             }
+    #         },
+    #     }
+    # ]
+    return j_skins
 
 
 def AnimationInfo(animationList):
@@ -166,28 +191,30 @@ animationList (Dictionary) : 存各個 Aniamtion
 
 
 def OutputJson(
-    bonesList, slotsList, animationList, img_folder_path, file_name, jsonPath
+    jData, bonesList, slotsList, animationList, img_folder_path, file_name, jsonPath
 ):
 
-    skeleton = SkeletonInfo(img_folder_path)
-    bones = BonesInfo(bonesList)
-    slots = SlotsInfo(file_name, slotsList)
-    skins = SkinsInfo(img_folder_path, file_name, slotsList)
+    jData["skeleton"] = SkeletonInfo(img_folder_path, jData["skeleton"])
+    # jData["bones"] = BonesInfo(bonesList)
+    jData["slots"] = SlotsInfo(file_name, slotsList, jData["slots"])
+    jData["skins"] = SkinsInfo(img_folder_path, file_name, jData["skins"])
     anims = AnimationInfo(animationList)
 
     for ani_name, ani_data in anims.items():
-        data = {
-            "skeleton": skeleton,
-            "bones": bones,
-            "slots": slots,
-            "skins": skins,
-            "animations": {ani_name: ani_data},
-        }
+        # data = {
+        #     "skeleton": skeleton,
+        #     "bones": bones,
+        #     "slots": slots,
+        #     "skins": skins,
+        #     "animations": {ani_name: ani_data},
+        # }
+        jData["animations"] = {ani_name: ani_data}
+
         json_filename = f"{ani_name}.json"
         dir_path = os.path.dirname(jsonPath)
         save_json_path = os.path.join(dir_path, json_filename)
         f = open(save_json_path, "w")  # create json file
-        json.dump(data, f, indent=4)
+        json.dump(jData, f, indent=4)
 
     # data = {
     #     "skeleton": skeleton,
