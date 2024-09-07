@@ -573,6 +573,7 @@ def mesh_process():
 
 @app.route("/mapping_process", methods=["POST"])
 def mapping_process():
+    print("Request received for /mapping_process")
     if "json_file" not in request.files:
         return jsonify({"error": "Missing files"}), 400
 
