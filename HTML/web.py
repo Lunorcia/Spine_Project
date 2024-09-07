@@ -91,8 +91,8 @@ def index():
     mapping = load_template_mapping()
     for type, templates in mapping.items():
         for t_name, t_data in templates.items():
-            t_data["gifUrl"] = (
-                url_for("static", filename=f"Image/PreviewGIF/{t_name}.gif"),
+            t_data["gifUrl"] = url_for(
+                "static", filename=f"Image/PreviewGIF/{t_name}.gif"
             )
     save_template_mapping(mapping)
     return render_template(
@@ -135,6 +135,9 @@ def download_all_templates():
         for template_name, template_info in templates.items():
             json_file_path = template_info.get("file")
             gif_file_path = template_info.get("gifUrl")
+            # gif_file_path is list
+            if isinstance(gif_file_path, list) and gif_file_path:
+                gif_file_path = gif_file_path[0]  # only one path in this list
             gif_full_path = os.path.join(
                 SRC_PATH, gif_file_path.lstrip("/")
             )  # turn into abs path
