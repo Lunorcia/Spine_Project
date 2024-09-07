@@ -77,6 +77,7 @@ def load_template_mapping():
     if os.path.exists(TEMPLATE_MAPPING_FILE):
         with open(TEMPLATE_MAPPING_FILE, "r") as f:
             return json.load(f)
+    print("Use default mapping")
     return TEMPLATE_MAPPING
 
 
@@ -122,6 +123,31 @@ def download_mapping():
             as_attachment=True,
             download_name="current_mapping.json",
         )
+
+
+@app.route("/download_all_templates")
+def download_all_templates():
+    temp_dir = os.path.join(SRC_PATH, "static", "temp")
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    mapping = load_template_mapping()
+    for template_type, templates in mapping.items():
+        for template_name, template_info in templates.items():
+            json_file_path = template_info.get("file")
+            gif_file_path = template_info.get("gifUrl")
+            gif_full_path = os.path.join(
+                SRC_PATH, gif_file_path.lstrip("/")
+            )  # turn into abs path
+
+            if os.path.exists(json_file_path):
+                shutil.copy(json_file_path, temp_dir)
+            if os.path.exists(gif_full_path):
+                shutil.copy(gif_full_path, temp_dir)
+    zip_filename = "mapping_file.zip"
+    zip_path = os.path.join(SRC_PATH, "static", zip_filename)
+    shutil.make_archive(zip_path.replace(".zip", ""), "zip", temp_dir)
+    shutil.rmtree(temp_dir)  # clear dir
+    return send_file(zip_path, as_attachment=True)
 
 
 @app.route("/upload", methods=["POST"])

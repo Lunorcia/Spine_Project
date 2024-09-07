@@ -197,6 +197,11 @@
                 <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Mapping" style="width: 50px; height: 50px; cursor: pointer;">
             </a>
             <p>點擊圖示下載模板列表(.json)</p><br><br>
+
+            <a href="{{ url_for('download_all_templates') }}">
+                <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Mapping" style="width: 50px; height: 50px; cursor: pointer;">
+            </a>
+            <p>點擊圖示下載所有模板文件(.json)</p><br><br>
         </div>
     </div>
 </body>
