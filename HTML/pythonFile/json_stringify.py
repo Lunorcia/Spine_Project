@@ -198,6 +198,7 @@ def OutputJson(
     # jData["bones"] = BonesInfo(bonesList)
     jData["slots"] = SlotsInfo(file_name, slotsList, jData["slots"])
     jData["skins"] = SkinsInfo(img_folder_path, file_name, jData["skins"])
+    jData["animations"] = {}
     anims = AnimationInfo(animationList)
 
     save_json_path = ""

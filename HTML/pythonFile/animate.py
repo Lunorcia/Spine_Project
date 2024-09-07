@@ -137,6 +137,8 @@ def SetJsonFile(jPaht):
 def Parse():
     # for i in jDict:
     #     print(i, jDict[i]) # animation's name, {values}
+    global animationList
+    animationList = {}
     for mainKey, mainValue in jData.items():
         if mainKey == "animations":
             for aKey, aValue in mainValue.items():
