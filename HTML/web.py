@@ -114,6 +114,16 @@ def adjust_template_page():
     return render_template("adjust_template.html")
 
 
+@app.route("/download_mapping")
+def download_mapping():
+    if os.path.exists(TEMPLATE_MAPPING_FILE):
+        return send_file(
+            TEMPLATE_MAPPING_FILE,
+            as_attachment=True,
+            download_name="current_mapping.json",
+        )
+
+
 @app.route("/upload", methods=["POST"])
 def upload():
     # 取得表單中的參數值
