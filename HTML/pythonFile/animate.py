@@ -332,7 +332,7 @@ def main():
     Parse()
     print("animate parse complete")
 
-    json_stringify.OutputJson(
+    output_json_path = json_stringify.OutputJson(
         jData,
         bonesList,
         slotsList,
@@ -341,7 +341,8 @@ def main():
         img_file_name,
         jsonPath,
     )
-    print("json output complete")
+    print(f"json output complete at: {output_json_path}")
+    return output_json_path
 
     # for key, ani in animationList.items():
     #     print("animation: " + ani.name)

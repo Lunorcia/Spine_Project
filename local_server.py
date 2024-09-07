@@ -246,10 +246,10 @@ def AdjustTranslate(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "translate" in b_animation and b_animation["translate"]:
-                first_x = b_animation["scale"][0].get("x", 0)
-                first_y = b_animation["scale"][0].get("y", 0)
-                last_x = b_animation["scale"][-1].get("x", 0)
-                last_y = b_animation["scale"][-1].get("y", 0)
+                first_x = b_animation["translate"][0].get("x", 0)
+                first_y = b_animation["translate"][0].get("y", 0)
+                last_x = b_animation["translate"][-1].get("x", 0)
+                last_y = b_animation["translate"][-1].get("y", 0)
                 for index, frame in enumerate(b_animation["translate"]):
                     # skip first & last frame if value is the same (to keep animation continous)
                     if (index == 0 or index == len(b_animation["translate"]) - 1) and (
@@ -438,7 +438,7 @@ def main_process():
     # open spine file in Spine GUI
     subprocess.Popen([spine_path, spine_file_path, "--auto-start"])
     print("Spine launched successfully.")
-    time.sleep(10)
+    time.sleep(9)
 
     return GenerateGIF(output_gif_path)
     # retries = 5
@@ -566,7 +566,7 @@ def mesh_process():
     # open spine file in Spine GUI
     subprocess.Popen([spine_path, spine_file_path, "--auto-start"])
     print("Spine launched successfully.")
-    time.sleep(10)
+    time.sleep(9)
     return GenerateGIF(output_gif_path)
 
 
@@ -583,7 +583,7 @@ def GenerateGIF(output_gif_path):
                 pyautogui.hotkey("ctrl", "e")
                 ChangeLanguageEng()
                 # pyautogui.click(x=327, y=422)
-                time.sleep(1)
+                time.sleep(0.5)
                 # click GIF button
                 gif_button_location = None
                 try:

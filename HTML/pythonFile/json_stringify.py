@@ -200,6 +200,7 @@ def OutputJson(
     jData["skins"] = SkinsInfo(img_folder_path, file_name, jData["skins"])
     anims = AnimationInfo(animationList)
 
+    save_json_path = ""
     for ani_name, ani_data in anims.items():
         # data = {
         #     "skeleton": skeleton,
@@ -210,11 +211,13 @@ def OutputJson(
         # }
         jData["animations"] = {ani_name: ani_data}
 
-        json_filename = f"{ani_name}.json"
+        json_filename = f"output.json"
         dir_path = os.path.dirname(jsonPath)
         save_json_path = os.path.join(dir_path, json_filename)
         f = open(save_json_path, "w")  # create json file
         json.dump(jData, f, indent=4)
+
+    return save_json_path
 
     # data = {
     #     "skeleton": skeleton,

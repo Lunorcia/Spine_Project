@@ -146,7 +146,7 @@ def upload():
 
     animate.SetImgPath(saved_img_path)
     animate.SetJsonFile(saved_json_path)
-    animate.main()
+    saved_json_path = animate.main()
 
     # send file to local server
     try:
