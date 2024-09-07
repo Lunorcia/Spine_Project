@@ -22,6 +22,7 @@
         const templates = {{ templates | tojson }};
         const existingTypes = Object.keys(templates);
         const invalidChars = /[.<>:"/\\|?*]/;
+        isValidTypeName = true
 
         function toggleNewTypeInput() 
         {
@@ -42,6 +43,7 @@
             } 
             else 
             {
+                isValidTypeName = true;
                 newTypeInput.style.display = "none";
                 existingTypeSelect.disabled = false;
                 templateNameInput.oninput = function()
@@ -60,11 +62,13 @@
             {
                 typeMessage.innerText = "這個動畫類型名稱已經存在，請重新命名或選擇既有動畫類型。\n";
                 submitButton.disabled = true;
+                isValidTypeName = false;
             } 
             else 
             {
                 typeMessage.innerText = "";
                 submitButton.disabled = false;
+                isValidTypeName = true;
             }
         }
 
@@ -91,7 +95,7 @@
             }
             //no conflict name
             templateMessage.innerText = "";
-            if (submitButton.disabled)  //invalid new template type name cause it disabled
+            if (!isValidTypeName && submitButton.disabled)  //invalid new template type name cause it disabled
                 return;
             submitButton.disabled = false;
         }
