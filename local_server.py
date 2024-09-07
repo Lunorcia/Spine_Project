@@ -80,12 +80,12 @@ def AdjustScale(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "scale" in b_animation and b_animation["scale"]:
-                prev_x = b_animation["scale"][0]["x"]
-                prev_y = b_animation["scale"][0]["y"]
+                prev_x = b_animation["scale"][0].get("x", 1)
+                prev_y = b_animation["scale"][0].get("y", 1)
                 first_x = prev_x
                 first_y = prev_y
-                last_x = b_animation["scale"][-1]["x"]
-                last_y = b_animation["scale"][-1]["y"]
+                last_x = b_animation["scale"][-1].get("x", 1)
+                last_y = b_animation["scale"][-1].get("y", 1)
                 for index, frame in enumerate(b_animation["scale"]):
                     # skip first & last frame if value is the same (to keep animation continous)
                     if (index == 0 or index == len(b_animation["scale"]) - 1) and (
@@ -246,10 +246,10 @@ def AdjustTranslate(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "translate" in b_animation and b_animation["translate"]:
-                first_x = b_animation["scale"][0]["x"]
-                first_y = b_animation["scale"][0]["y"]
-                last_x = b_animation["scale"][-1]["x"]
-                last_y = b_animation["scale"][-1]["y"]
+                first_x = b_animation["scale"][0].get("x", 0)
+                first_y = b_animation["scale"][0].get("y", 0)
+                last_x = b_animation["scale"][-1].get("x", 0)
+                last_y = b_animation["scale"][-1].get("y", 0)
                 for index, frame in enumerate(b_animation["translate"]):
                     # skip first & last frame if value is the same (to keep animation continous)
                     if (index == 0 or index == len(b_animation["translate"]) - 1) and (
@@ -283,9 +283,9 @@ def AdjustRotate(json_data, intensity):
     for animation_name, animation in json_data["animations"].items():
         for b_name, b_animation in animation["bones"].items():
             if "rotate" in b_animation and b_animation["rotate"]:
-                prev_value = b_animation["rotate"][0]["value"]
+                prev_value = b_animation["rotate"][0].get("value", 0)
                 first_value = prev_value
-                last_value = b_animation["rotate"][-1]["value"]
+                last_value = b_animation["rotate"][-1].get("value", 0)
 
                 for index, frame in enumerate(b_animation["rotate"]):
                     # skip first & last frame if value is the same (to keep animation continous)
