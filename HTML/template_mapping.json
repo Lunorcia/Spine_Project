@@ -1,0 +1,74 @@
+{
+    "Only Scale": {
+        "Sym_bomp_01": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_01.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_01.gif"
+            ]
+        },
+        "Sym_bomp_02": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_02.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_02.gif"
+            ]
+        },
+        "Sym_Tip_01": {
+            "file": "/app/HTML/static/JsonFile/Sym_Tip_01.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_Tip_01.gif"
+            ]
+        }
+    },
+    "Scale & rotate": {
+        "01win": {
+            "file": "/app/HTML/static/JsonFile/01win.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/01win.gif"
+            ]
+        },
+        "Sym_Cascading_01": {
+            "file": "/app/HTML/static/JsonFile/Sym_Cascading_01.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_Cascading_01.gif"
+            ]
+        },
+        "Sym_bomp_03": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_03.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_03.gif"
+            ]
+        },
+        "Sym_bomp_06": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_06.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_06.gif"
+            ]
+        },
+        "Sym_bomp_07": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_07.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_07.gif"
+            ]
+        }
+    },
+    "Scale & translate": {
+        "Sym_Cascading_02": {
+            "file": "/app/HTML/static/JsonFile/Sym_Cascading_02.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_Cascading_02.gif"
+            ]
+        },
+        "Sym_bomp_04": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_04.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_04.gif"
+            ]
+        },
+        "Sym_bomp_05": {
+            "file": "/app/HTML/static/JsonFile/Sym_bomp_05.json",
+            "gifUrl": [
+                "/static/Image/PreviewGIF/Sym_bomp_05.gif"
+            ]
+        }
+    }
+}

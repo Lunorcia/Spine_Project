@@ -14,6 +14,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 SPINE_FOLDER_PATH = os.path.join(CURRENT_DIR, "HTML", "spine")
 UPLOAD_IMG_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "Image", "Saved")
 JSON_FILE_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "JsonFile")
+MAPPING_FILE_PATH = os.path.join(CURRENT_DIR, "HTML", "template_mapping.json")
 
 GIF_BUTTON_IMG_PATH = os.path.join(
     CURRENT_DIR, "HTML", "static", "Image", "gif_button.png"
@@ -568,6 +569,16 @@ def mesh_process():
     print("Spine launched successfully.")
     time.sleep(9)
     return GenerateGIF(output_gif_path)
+
+
+@app.route("/mapping_process", methods=["POST"])
+def mapping_process():
+    if "json_file" not in request.files:
+        return jsonify({"error": "Missing files"}), 400
+
+    json_file = request.files["json_file"]
+    json_file.save(MAPPING_FILE_PATH)
+    return "File saved successfully", 200
 
 
 # control spine to export gif and return

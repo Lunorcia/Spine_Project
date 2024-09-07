@@ -19,6 +19,7 @@ import pythonFile.enlarge_mesh as enlargeMesh
 
 LOCAL_SERVER_MAIN = "https://6da4-219-70-173-170.ngrok-free.app/main_process"
 LOCAL_SERVER_MESH = "https://6da4-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://6da4-219-70-173-170.ngrok-free.app/mapping_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -77,23 +78,41 @@ def load_template_mapping():
     if os.path.exists(TEMPLATE_MAPPING_FILE):
         with open(TEMPLATE_MAPPING_FILE, "r") as f:
             return json.load(f)
-    print("Use default mapping")
-    return TEMPLATE_MAPPING
+    print("No default mapping, return empty list")
+    return {}
 
 
 def save_template_mapping(mapping):
+    # save json on web server
     with open(TEMPLATE_MAPPING_FILE, "w") as f:
         json.dump(mapping, f, indent=4)
+    # save json to local server
+    try:
+        with open(TEMPLATE_MAPPING_FILE, "rb") as json_file:
+            print("Before send request(save template mapping).\n")
+            response = requests.post(
+                LOCAL_SERVER_MAPPING,
+                files={"json_file": json_file},
+                timeout=180,
+            )
+
+            if response.status_code == 200:
+                print("Mappings saved to local successfully")
+            else:
+                print("Request failed.\n")
+                return jsonify({"Error": "Saving mappings failed."}), 500
+    except Exception as e:
+        return jsonify({"Error sending json file to local server": str(e)}), 500
 
 
 @app.route("/")
 def index():
     mapping = load_template_mapping()
-    for type, templates in mapping.items():
-        for t_name, t_data in templates.items():
-            t_data["gifUrl"] = url_for(
-                "static", filename=f"Image/PreviewGIF/{t_name}.gif"
-            )
+    # for type, templates in mapping.items():
+    #     for t_name, t_data in templates.items():
+    #         t_data["gifUrl"] = url_for(
+    #             "static", filename=f"Image/PreviewGIF/{t_name}.gif"
+    #         )
     save_template_mapping(mapping)
     return render_template(
         "anim.html", image_web_url="", gif_web_url="", templates=mapping
@@ -121,7 +140,7 @@ def download_mapping():
         return send_file(
             TEMPLATE_MAPPING_FILE,
             as_attachment=True,
-            download_name="current_mapping.json",
+            download_name="template_mapping.json",
         )
 
 
