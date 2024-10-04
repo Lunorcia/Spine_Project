@@ -592,6 +592,7 @@ def GenerateGIF(output_gif_path):
                 spine_window = windows[0]
                 spine_window.activate()
                 time.sleep(0.5)
+                pyautogui.hotkey("enter")
                 pyautogui.hotkey("ctrl", "e")
                 ChangeLanguageEng()
                 # pyautogui.click(x=327, y=422)
