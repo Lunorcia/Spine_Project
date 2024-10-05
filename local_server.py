@@ -1,3 +1,4 @@
+import pathlib
 import zipfile
 from flask import Flask, request, jsonify, send_file
 import os
@@ -8,8 +9,14 @@ import ctypes
 import time
 import datetime
 import json
+import sys
 
-import pythonFile.selenium_control as seleniumControl
+SRC_PATH = pathlib.Path(__file__).parent.absolute()
+sys.path.append(str(SRC_PATH))
+sys.path.append(
+    str(os.path.join(SRC_PATH, "HTML", "pythonFile"))
+)  # ensure SRC_PATH is in sys.path
+import selenium_control as seleniumControl
 
 app = Flask(__name__, static_url_path="/static")
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))

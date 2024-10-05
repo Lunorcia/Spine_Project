@@ -9,7 +9,7 @@ import time
 import pyautogui
 import os
 
-import pythonFile.fetch_animation_file as fetchAnimation
+import fetch_animation_file as fetchAnimation
 
 
 # CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
