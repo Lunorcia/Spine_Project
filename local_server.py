@@ -1,3 +1,4 @@
+import zipfile
 from flask import Flask, request, jsonify, send_file
 import os
 import subprocess
@@ -8,6 +9,8 @@ import time
 import datetime
 import json
 
+import pythonFile.selenium_control as seleniumControl
+
 app = Flask(__name__, static_url_path="/static")
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,6 +18,7 @@ SPINE_FOLDER_PATH = os.path.join(CURRENT_DIR, "HTML", "spine")
 UPLOAD_IMG_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "Image", "Saved")
 JSON_FILE_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "JsonFile")
 MAPPING_FILE_PATH = os.path.join(CURRENT_DIR, "HTML", "template_mapping.json")
+WEBDOWNLOAD_FOLDER = os.path.join(CURRENT_DIR, "HTML", "static", "WebDownload")
 
 GIF_BUTTON_IMG_PATH = os.path.join(
     CURRENT_DIR, "HTML", "static", "Image", "gif_button.png"
@@ -580,6 +584,30 @@ def mapping_process():
     json_file = request.files["json_file"]
     json_file.save(MAPPING_FILE_PATH)
     return "File saved successfully", 200
+
+
+@app.route("/game_url_process", methods=["POST"])
+def game_url_process():
+    print("Request received for /game_url_process")
+    game_url = request.form["game_url"]
+    try:
+        seleniumControl.SetUrl(game_url)
+        files_dir = seleniumControl.main()
+        if files_dir is not None:
+            # compress folder's files
+            z_file = os.path.join(WEBDOWNLOAD_FOLDER, "resources.zip")
+            with zipfile.ZipFile(z_file, "w") as zipf:
+                for file_name in os.listdir(files_dir):
+                    f_path = os.path.join(files_dir, file_name)
+                    if os.path.isfile(f_path):
+                        zipf.write(f_path, arcname=file_name)
+            print("Compress complete\n")
+            return send_file(z_file, as_attachment=True)
+        else:
+            print("Selenium control failed\n")
+
+    except Exception as e:
+        return jsonify({"error": "Missing files"}), 400
 
 
 # control spine to export gif and return

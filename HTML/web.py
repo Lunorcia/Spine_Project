@@ -1,3 +1,4 @@
+import zipfile
 from flask import Flask, render_template, request, url_for, redirect, jsonify, send_file
 import pathlib
 import sys
@@ -17,15 +18,17 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://6da4-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://6da4-219-70-173-170.ngrok-free.app/mesh_process"
-LOCAL_SERVER_MAPPING = "https://6da4-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_MAIN = "https://0713-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://0713-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://0713-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_GAME = "https://0713-219-70-173-170.ngrok-free.app/game_url_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
 UPLOAD_IMG_FOLDER = os.path.join(SRC_PATH, "static", "Image", "Saved")
 JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "JsonFile")
 UPLOADED_JSON_FILE_FOLDER = os.path.join(SRC_PATH, "static", "UploadedJson")
+UNZIP_FOLDER = os.path.join(SRC_PATH, "static", "UnzipFromWeb")
 TEMPLATE_MAPPING_FILE = os.path.join(SRC_PATH, "template_mapping.json")
 
 TEMPLATE_MAPPING = {
@@ -131,6 +134,51 @@ def add_template_page():
 @app.route("/adjust_template_page")
 def adjust_template_page():
     return render_template("adjust_template.html")
+
+
+@app.route("/enter_game_url")
+def enter_game_url():
+    return render_template("fetch_game.html")
+
+
+@app.route("/fetch_game_resources", methods=["POST"])
+def fetch_game_resources():
+    game_url = request.form["game_url"]
+    # send url to local server
+    try:
+        print("Before send request.\n")
+        response = requests.post(
+            LOCAL_SERVER_GAME,
+            data={
+                "game_url": game_url,
+            },
+            timeout=180,
+            stream=True,
+        )
+
+        if response.status_code == 200:
+            # get zip file
+            zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
+            with open(zip_file, "wb") as z:
+                for chunk in response.iter_content(chunk_size=128):
+                    z.write(chunk)
+            # unzip to UNZIP_FOLDER
+            with zipfile.ZipFile(zip_file, "r") as z:
+                z.extractall(UNZIP_FOLDER)
+
+            files_list = os.listdir(UNZIP_FOLDER)
+            file_urls = []
+            for file_name in files_list:
+                file_url = url_for("download_file", folder="zip", filename=file_name)
+                file_urls.append({"file_name": file_name, "file_url": file_url})
+
+            return jsonify({"files": file_urls})
+
+        else:
+            print("Request failed.\n")
+            return f"Error fetching game resources: {response.status_code}", 500
+    except Exception as e:
+        return jsonify({"fetch game url error": str(e)}), 500
 
 
 @app.route("/download_mapping")
@@ -493,6 +541,8 @@ def download_file(folder, filename):
         file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, filename)
     elif folder == "img":
         file_path = os.path.join(UPLOAD_IMG_FOLDER, filename)
+    elif folder == "zip":
+        file_path = os.path.join(UNZIP_FOLDER, filename)
     else:
         return "Invalid folder", 400
     return send_file(file_path, as_attachment=True)

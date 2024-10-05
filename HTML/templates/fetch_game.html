@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>擷取遊戲動畫</title>
+</head>
+<body>
+    <h2>輸入遊戲網址(PG Soft only)以擷取資源</h2>
+    <form action="/fetch_game_resources" method="post">
+        <label for="game_url">遊戲網址:</label>
+        <input type="text" id="game_url" name="game_url" required>
+        <button type="submit">送出</button>
+    </form>
+
+    <div id="file-list"></div>
+
+    <script>
+        document.querySelector("form").onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch("/fetch_game_resources", {
+                method: "POST",
+                body: formData
+            });
+    
+            const result = await response.json();
+    
+            // Display files for download
+            const fileListDiv = document.getElementById("file-list");
+            fileListDiv.innerHTML = "";  // Clear any previous results
+            if (result.files) {
+                result.files.forEach(file => {
+                    const fileLink = document.createElement("a");
+                    fileLink.href = file.file_url;
+                    fileLink.innerText = `下載 ${file.file_name}`;
+                    fileLink.style.display = "block";
+                    fileListDiv.appendChild(fileLink);
+                });
+            } else if (result.error) {
+                fileListDiv.innerText = "處理過程中出現錯誤：" + result.error;
+            }
+        };
+    </script>
+</body>
+</html>

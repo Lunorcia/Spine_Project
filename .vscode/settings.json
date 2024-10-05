@@ -1,3 +1,6 @@
 {
-    "liveServer.settings.multiRootWorkspaceName": "VSCode"
+    "liveServer.settings.multiRootWorkspaceName": "VSCode",
+    "python.analysis.extraPaths": [
+        "./HTML"
+    ]
 }
