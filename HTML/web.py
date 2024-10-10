@@ -177,8 +177,11 @@ def local_fetch_process(game_url):
             with open(zip_file, "wb") as z:
                 z.write(response.content)
             # unzip to UNZIP_FOLDER
-            with zipfile.ZipFile(zip_file, "r") as z:
-                z.extractall(UNZIP_FOLDER)
+            if os.path.exists(zip_file):
+                with zipfile.ZipFile(zip_file, "r") as z:
+                    z.extractall(UNZIP_FOLDER)
+            else:
+                print("Cannot find zip file at web.\n")
 
             files_list = os.listdir(UNZIP_FOLDER)
             if len(files_list) > 0:

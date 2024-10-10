@@ -609,7 +609,10 @@ def game_url_process():
                     if os.path.isfile(f_path):
                         zipf.write(f_path, arcname=file_name)
             print("Compress complete\n")
-            return send_file(z_file, as_attachment=True)
+            if os.path.exists(z_file):
+                return send_file(z_file, as_attachment=True)
+            else:
+                print("Cannot find zip file at local.\n")
         else:
             print("Selenium control failed\n")
 
