@@ -283,6 +283,7 @@ def main():
         ChangePngNames(animation_png_list, png_name_list)
         # for png_list in animation_png_list:
         #     print(png_list)
+        print("fetch and zip files complete. return")
         return saved_dir
 
 

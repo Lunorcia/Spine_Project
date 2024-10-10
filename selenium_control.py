@@ -29,7 +29,9 @@ WEB_DOWNLOAD_DIR = (
     r"C:\Users\cyivs\OneDrive\Desktop\Spine_Project\HTML\static\WebDownload"
 )
 
-chrome_driver_path = r"E:\chromedriver-win64\chromedriver.exe"
+chrome_driver_path = (
+    r"C:\Users\cyivs\OneDrive\Desktop\Spine_Project\HTML\pythonFile\chromedriver.exe"
+)
 extension_path = r"C:\Users\cyivs\OneDrive\Desktop\Spine_Project\HTML\pythonFile\Save-All-Resources-Chrome.crx"
 game_url = r"https://slotcatalog.com/en/slots/Fortune-Tiger-PG-Soft"
 
@@ -135,29 +137,32 @@ def main():
         By.XPATH, '//*[@id="gameContainer"]/div/div/div/a'
     )
     play_demo_button.click()
-    time.sleep(18)
-
+    time.sleep(15)
+    print("start to find save button\n")
     # click Save All Resource button
     save_button = None
-    save_button = pyautogui.locateOnScreen(SAVE_BUTTON_IMG_PATH)
-    if save_button is not None:
-        save_button = pyautogui.center(save_button)
-        pyautogui.click(save_button)
-        time.sleep(20)
+    try:
+        save_button = pyautogui.locateOnScreen(SAVE_BUTTON_IMG_PATH)
+        if save_button is not None:
+            save_button = pyautogui.center(save_button)
+            pyautogui.click(save_button)
+            time.sleep(20)
 
-        # unzip file
-        zip_file = GetZip()
-        if zip_file:
-            print(f"Zip file at: {zip_file}")
-            unzip_dir = Unzip(zip_file)
-            fetchAnimation.SetFolderPath(unzip_dir)
-            files_dir = fetchAnimation.main()
-            if files_dir is not None:
-                return files_dir
+            # unzip file
+            zip_file = GetZip()
+            if zip_file:
+                print(f"Zip file at: {zip_file}")
+                unzip_dir = Unzip(zip_file)
+                fetchAnimation.SetFolderPath(unzip_dir)
+                files_dir = fetchAnimation.main()
+                if files_dir is not None:
+                    print("selenium control complete. return")
+                    return files_dir
 
-    else:
-        print("Failed to find save button")
-
+        else:
+            print("Failed to find save button")
+    except Exception as e:
+        print(f"Failed to find save button with image: {e}")
     print("program end")
     return None
 
