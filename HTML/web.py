@@ -163,6 +163,7 @@ def local_fetch_process(game_url):
         if response.status_code == 200:
             # before write zip file, clear folder
             if os.path.exists(UNZIP_FOLDER):
+                print("Cleanning unzip folder\n")
                 for file_name in os.listdir(UNZIP_FOLDER):
                     file_path = os.path.join(UNZIP_FOLDER, file_name)
                     try:
@@ -173,10 +174,12 @@ def local_fetch_process(game_url):
                     except Exception as e:
                         print(f"Failed to delete {file_path}. Reason: {e}")
             # get zip file
+            print("Before getting zip file at web.\n")
             zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
             with open(zip_file, "wb") as z:
                 z.write(response.content)
             # unzip to UNZIP_FOLDER
+            print("Before extracting zip file at web.\n")
             if os.path.exists(zip_file):
                 with zipfile.ZipFile(zip_file, "r") as z:
                     z.extractall(UNZIP_FOLDER)
