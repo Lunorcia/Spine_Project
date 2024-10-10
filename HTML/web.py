@@ -175,8 +175,7 @@ def local_fetch_process(game_url):
             # get zip file
             zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
             with open(zip_file, "wb") as z:
-                for chunk in response.iter_content(chunk_size=128):
-                    z.write(chunk)
+                z.write(response.content)
             # unzip to UNZIP_FOLDER
             with zipfile.ZipFile(zip_file, "r") as z:
                 z.extractall(UNZIP_FOLDER)
