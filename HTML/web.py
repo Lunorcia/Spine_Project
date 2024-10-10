@@ -7,6 +7,7 @@ import requests
 import mimetypes
 import json
 import shutil
+import threading
 
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
@@ -141,9 +142,12 @@ def enter_game_url():
     return render_template("fetch_game.html")
 
 
-@app.route("/fetch_game_resources", methods=["POST"])
-def fetch_game_resources():
-    game_url = request.form["game_url"]
+processing_status = {"status": "processing", "files": []}
+
+
+def local_fetch_process(game_url):
+    global processing_status
+    processing_status = {"status": "processing", "files": []}  # init
     # send url to local server
     try:
         print("Before send request.\n")
@@ -157,6 +161,17 @@ def fetch_game_resources():
         )
 
         if response.status_code == 200:
+            # before write zip file, clear folder
+            if os.path.exists(UNZIP_FOLDER):
+                for file_name in os.listdir(UNZIP_FOLDER):
+                    file_path = os.path.join(UNZIP_FOLDER, file_name)
+                    try:
+                        if os.path.isfile(file_path) or os.path.islink(file_path):
+                            os.unlink(file_path)  # 移除檔案或符號連結
+                        elif os.path.isdir(file_path):
+                            shutil.rmtree(file_path)  # 移除目錄及其內部內容
+                    except Exception as e:
+                        print(f"Failed to delete {file_path}. Reason: {e}")
             # get zip file
             zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
             with open(zip_file, "wb") as z:
@@ -167,18 +182,42 @@ def fetch_game_resources():
                 z.extractall(UNZIP_FOLDER)
 
             files_list = os.listdir(UNZIP_FOLDER)
-            file_urls = []
-            for file_name in files_list:
-                file_url = url_for("download_file", folder="zip", filename=file_name)
-                file_urls.append({"file_name": file_name, "file_url": file_url})
+            if len(files_list) > 0:
+                file_urls = []
+                for file_name in files_list:
+                    file_url = url_for(
+                        "download_file", folder="zip", filename=file_name
+                    )
+                    file_urls.append({"file_name": file_name, "file_url": file_url})
 
-            return jsonify({"files": file_urls})
+                processing_status = {"status": "completed", "files": file_urls}
+                print("extract files complete. (in web.py local_fetch_process())\n")
 
         else:
-            print("Request failed.\n")
-            return f"Error fetching game resources: {response.status_code}", 500
+            print("Request failed. (in web.py local_fetch_process())\n")
     except Exception as e:
-        return jsonify({"fetch game url error": str(e)}), 500
+        print(f"fetch game url error: {str(e)}")
+        processing_status = {"status": "error", "message": str(e)}
+
+
+@app.route("/fetch_game_resources", methods=["POST"])
+def fetch_game_resources():
+    game_url = request.form["game_url"]
+
+    local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
+    local_thread.start()
+
+    return jsonify({"status": "processing"}), 202
+
+
+@app.route("/check_processing_status", methods=["GET"])
+def check_processing_status():
+    global processing_status
+    if processing_status["status"] == "completed":
+        return jsonify(processing_status)
+    elif processing_status["status"] == "error":
+        return jsonify(processing_status)
+    return jsonify({"status": "processing", "files": []})
 
 
 @app.route("/download_mapping")

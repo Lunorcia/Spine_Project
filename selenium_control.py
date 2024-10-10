@@ -126,7 +126,7 @@ def main():
     # open chrome browser
     driver.get(game_url)
     driver.maximize_window()
-    time.sleep(3)
+    time.sleep(1)
 
     SourcesPanelControl()  # switch to Sources panel
     ExtensionPanelControl()  # switch to ResourcesSaver panel
@@ -146,7 +146,7 @@ def main():
         if save_button is not None:
             save_button = pyautogui.center(save_button)
             pyautogui.click(save_button)
-            time.sleep(20)
+            time.sleep(15)
 
             # unzip file
             zip_file = GetZip()
