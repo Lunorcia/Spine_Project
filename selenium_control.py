@@ -135,7 +135,7 @@ def main():
         By.XPATH, '//*[@id="gameContainer"]/div/div/div/a'
     )
     play_demo_button.click()
-    time.sleep(10)
+    time.sleep(18)
 
     # click Save All Resource button
     save_button = None

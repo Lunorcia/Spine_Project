@@ -89,9 +89,9 @@ def FetchAllSpineFile(config_data, skeleton_index):
         else:
             print(f"Cannot find json file ends with {key}.")
 
-    print(f"existing json files:")
-    for file_path in found_json_files:
-        print(f"{file_path}")
+    # print(f"existing json files:")
+    # for file_path in found_json_files:
+    #     print(f"{file_path}")
 
     return found_json_files
 
@@ -147,9 +147,9 @@ def FetchPngAsset(config_data, animation_json_paths):
 
             animation_png_list.append(found_png_files)
 
-            print(f"existing png files for{anim_json}:")
-            for file_path in found_png_files:
-                print(f"{file_path}")
+            # print(f"existing png files for{anim_json}:")
+            # for file_path in found_png_files:
+            #     print(f"{file_path}")
     return animation_png_list
 
 
