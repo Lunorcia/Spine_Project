@@ -196,18 +196,10 @@ def local_fetch_process(game_url):
                         print("Extract zip complete.")
                 else:
                     print("Cannot find zip file at web.\n")
-
-                files_list = os.listdir(UNZIP_FOLDER)
-                if len(files_list) > 0:
-                    file_urls = []
-                    for file_name in files_list:
-                        file_url = url_for(
-                            "download_file", folder="zip", filename=file_name
-                        )
-                        file_urls.append({"file_name": file_name, "file_url": file_url})
-
-                    processing_status = {"status": "completed", "files": file_urls}
-                    print("extract files complete. (in web.py local_fetch_process())\n")
+                processing_status = {
+                    "status": "completed",
+                    "files": [],
+                }  # let check_processing_status() to fill files url list
 
             else:
                 print("Request failed. (in web.py local_fetch_process())\n")
@@ -230,6 +222,15 @@ def fetch_game_resources():
 def check_processing_status():
     global processing_status
     if processing_status["status"] == "completed":
+        files_list = os.listdir(UNZIP_FOLDER)
+        if len(files_list) > 0:
+            file_urls = []
+            for file_name in files_list:
+                file_url = url_for("download_file", folder="zip", filename=file_name)
+                file_urls.append({"file_name": file_name, "file_url": file_url})
+
+            processing_status = {"status": "completed", "files": file_urls}
+            print("extract files complete. (in web.py local_fetch_process())\n")
         return jsonify(processing_status)
     elif processing_status["status"] == "error":
         return jsonify(processing_status)
