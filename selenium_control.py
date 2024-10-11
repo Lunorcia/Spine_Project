@@ -78,7 +78,7 @@ def SourcesPanelControl():
             source_panel_pos = pyautogui.center(source_panel_pos)
             pyautogui.click(source_panel_pos)
             pyautogui.click(source_panel_pos)
-            time.sleep(0.5)
+            time.sleep(0.8)
             pyautogui.hotkey("ctrl", "f8")
             time.sleep(0.5)
         else:

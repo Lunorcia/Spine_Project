@@ -152,9 +152,8 @@ processing_status = {"status": "processing", "files": []}
 
 
 def local_fetch_process(game_url):
+    global processing_status
     with app.app_context():
-        global processing_status
-        processing_status = {"status": "processing", "files": []}  # init
         # send url to local server
         try:
             print("Before send request.\n")
@@ -200,9 +199,11 @@ def local_fetch_process(game_url):
                     "status": "completed",
                     "files": [],
                 }  # let check_processing_status() to fill files url list
+                return check_processing_status()
 
             else:
                 print("Request failed. (in web.py local_fetch_process())\n")
+                processing_status = {"status": "error", "message": str(e)}
         except Exception as e:
             print(f"fetch game url error: {str(e)}")
             processing_status = {"status": "error", "message": str(e)}
@@ -213,6 +214,8 @@ def fetch_game_resources():
     game_url = request.form["game_url"]
 
     local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
+    global processing_status
+    processing_status = {"status": "processing", "files": []}  # init
     local_thread.start()
 
     return jsonify({"status": "processing"}), 202

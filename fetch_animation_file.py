@@ -48,6 +48,22 @@ def CheckConfig(config_data):
     return -1
 
 
+def ClearFolder():
+    # before write zip file, clear folder
+    if os.path.exists(saved_dir):
+        print("Cleanning FetchFiles folder before saving animation json.\n")
+        for file_name in os.listdir(saved_dir):
+            file_path = os.path.join(saved_dir, file_name)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)  # 移除檔案或符號連結
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)  # 移除目錄及其內部內容
+            except Exception as e:
+                print(f"Failed to delete {file_path}. Reason: {e}")
+    0
+
+
 """
 1. 找動畫json檔
     1-1. 從config找"path", spine/..._atlas_... 的都是動畫檔名
@@ -262,6 +278,7 @@ def FetchAnimationInfo(config_data, animation_json_paths):
 
 def main():
 
+    ClearFolder()
     # find config json file
     config_file = FetchConfig()
     if config_file is None:
