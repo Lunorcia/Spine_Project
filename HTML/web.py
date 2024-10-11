@@ -204,7 +204,7 @@ def local_fetch_process(game_url):
             else:
                 with status_lock:
                     print("Request failed. (in web.py local_fetch_process())\n")
-                    processing_status = {"status": "error", "message": str(e)}
+                    processing_status = {"status": "error", "message": "local_server return error"}
         except Exception as e:
             with status_lock:
                 print(f"fetch game url error: {str(e)}")
@@ -244,7 +244,8 @@ def check_processing_status():
             return jsonify(processing_status)
         elif processing_status["status"] == "error":
             return jsonify(processing_status)
-        return jsonify({"status": "processing", "files": []})
+        processing_status = {"status": "processing", "files": []}
+        return jsonify(processing_status)
 
 
 @app.route("/download_mapping")
