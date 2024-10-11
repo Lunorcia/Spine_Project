@@ -1,5 +1,14 @@
 import zipfile
-from flask import Flask, render_template, request, url_for, redirect, jsonify, send_file
+from flask import (
+    Flask,
+    render_template,
+    request,
+    url_for,
+    redirect,
+    jsonify,
+    send_file,
+    current_app,
+)
 import pathlib
 import sys
 import os
@@ -146,67 +155,68 @@ processing_status = {"status": "processing", "files": []}
 
 
 def local_fetch_process(game_url):
-    global processing_status
-    processing_status = {"status": "processing", "files": []}  # init
-    # send url to local server
-    try:
-        print("Before send request.\n")
-        response = requests.post(
-            LOCAL_SERVER_GAME,
-            data={
-                "game_url": game_url,
-            },
-            timeout=180,
-            stream=True,
-        )
+    with current_app.app_context:
+        global processing_status
+        processing_status = {"status": "processing", "files": []}  # init
+        # send url to local server
+        try:
+            print("Before send request.\n")
+            response = requests.post(
+                LOCAL_SERVER_GAME,
+                data={
+                    "game_url": game_url,
+                },
+                timeout=180,
+                stream=True,
+            )
 
-        if response.status_code == 200:
-            # before write zip file, clear folder
-            if os.path.exists(UNZIP_FOLDER):
-                print("Cleanning unzip folder\n")
-                for file_name in os.listdir(UNZIP_FOLDER):
-                    file_path = os.path.join(UNZIP_FOLDER, file_name)
-                    try:
-                        if os.path.isfile(file_path) or os.path.islink(file_path):
-                            os.unlink(file_path)  # 移除檔案或符號連結
-                        elif os.path.isdir(file_path):
-                            shutil.rmtree(file_path)  # 移除目錄及其內部內容
-                    except Exception as e:
-                        print(f"Failed to delete {file_path}. Reason: {e}")
-            # get zip file
-            print("Before getting zip file at web.\n")
-            if not os.path.exists(UNZIP_FOLDER):
-                print("Create unzip folder.\n")
-                os.makedirs(UNZIP_FOLDER)
-            zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
-            with open(zip_file, "wb") as z:
-                z.write(response.content)
-            # unzip to UNZIP_FOLDER
-            print("Before extracting zip file at web.\n")
-            if os.path.exists(zip_file):
-                with zipfile.ZipFile(zip_file, "r") as z:
-                    z.extractall(UNZIP_FOLDER)
-                    print("Extract zip complete.")
+            if response.status_code == 200:
+                # before write zip file, clear folder
+                if os.path.exists(UNZIP_FOLDER):
+                    print("Cleanning unzip folder\n")
+                    for file_name in os.listdir(UNZIP_FOLDER):
+                        file_path = os.path.join(UNZIP_FOLDER, file_name)
+                        try:
+                            if os.path.isfile(file_path) or os.path.islink(file_path):
+                                os.unlink(file_path)  # 移除檔案或符號連結
+                            elif os.path.isdir(file_path):
+                                shutil.rmtree(file_path)  # 移除目錄及其內部內容
+                        except Exception as e:
+                            print(f"Failed to delete {file_path}. Reason: {e}")
+                # get zip file
+                print("Before getting zip file at web.\n")
+                if not os.path.exists(UNZIP_FOLDER):
+                    print("Create unzip folder.\n")
+                    os.makedirs(UNZIP_FOLDER)
+                zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
+                with open(zip_file, "wb") as z:
+                    z.write(response.content)
+                # unzip to UNZIP_FOLDER
+                print("Before extracting zip file at web.\n")
+                if os.path.exists(zip_file):
+                    with zipfile.ZipFile(zip_file, "r") as z:
+                        z.extractall(UNZIP_FOLDER)
+                        print("Extract zip complete.")
+                else:
+                    print("Cannot find zip file at web.\n")
+
+                files_list = os.listdir(UNZIP_FOLDER)
+                if len(files_list) > 0:
+                    file_urls = []
+                    for file_name in files_list:
+                        file_url = url_for(
+                            "download_file", folder="zip", filename=file_name
+                        )
+                        file_urls.append({"file_name": file_name, "file_url": file_url})
+
+                    processing_status = {"status": "completed", "files": file_urls}
+                    print("extract files complete. (in web.py local_fetch_process())\n")
+
             else:
-                print("Cannot find zip file at web.\n")
-
-            files_list = os.listdir(UNZIP_FOLDER)
-            if len(files_list) > 0:
-                file_urls = []
-                for file_name in files_list:
-                    file_url = url_for(
-                        "download_file", folder="zip", filename=file_name
-                    )
-                    file_urls.append({"file_name": file_name, "file_url": file_url})
-
-                processing_status = {"status": "completed", "files": file_urls}
-                print("extract files complete. (in web.py local_fetch_process())\n")
-
-        else:
-            print("Request failed. (in web.py local_fetch_process())\n")
-    except Exception as e:
-        print(f"fetch game url error: {str(e)}")
-        processing_status = {"status": "error", "message": str(e)}
+                print("Request failed. (in web.py local_fetch_process())\n")
+        except Exception as e:
+            print(f"fetch game url error: {str(e)}")
+            processing_status = {"status": "error", "message": str(e)}
 
 
 @app.route("/fetch_game_resources", methods=["POST"])
