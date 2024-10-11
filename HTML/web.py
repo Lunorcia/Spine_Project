@@ -152,7 +152,7 @@ processing_status = {"status": "processing", "files": []}
 
 
 def local_fetch_process(game_url):
-    with app.app_context:
+    with app.app_context():
         global processing_status
         processing_status = {"status": "processing", "files": []}  # init
         # send url to local server
