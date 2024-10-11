@@ -192,14 +192,13 @@ def local_fetch_process(game_url):
                 if os.path.exists(zip_file):
                     with zipfile.ZipFile(zip_file, "r") as z:
                         z.extractall(UNZIP_FOLDER)
-                        print("Extract zip complete.")
+                        print("Extract zip complete.\n")
                 else:
                     print("Cannot find zip file at web.\n")
                 processing_status = {
                     "status": "completed",
                     "files": [],
                 }  # let check_processing_status() to fill files url list
-                return check_processing_status()
 
             else:
                 print("Request failed. (in web.py local_fetch_process())\n")
@@ -223,24 +222,22 @@ def fetch_game_resources():
 
 @app.route("/check_processing_status", methods=["GET"])
 def check_processing_status():
-    with app.app_context():
-        global processing_status
-        if processing_status["status"] == "completed":
-            files_list = os.listdir(UNZIP_FOLDER)
-            if len(files_list) > 0:
-                file_urls = []
-                for file_name in files_list:
-                    file_url = url_for(
-                        "download_file", folder="zip", filename=file_name
-                    )
-                    file_urls.append({"file_name": file_name, "file_url": file_url})
+    global processing_status
+    if processing_status["status"] == "completed":
+        print("Checking status completed.\n")
+        files_list = os.listdir(UNZIP_FOLDER)
+        if len(files_list) > 0:
+            file_urls = []
+            for file_name in files_list:
+                file_url = url_for("download_file", folder="zip", filename=file_name)
+                file_urls.append({"file_name": file_name, "file_url": file_url})
 
-                processing_status = {"status": "completed", "files": file_urls}
-                print("extract files complete. (in web.py local_fetch_process())\n")
-            return jsonify(processing_status)
-        elif processing_status["status"] == "error":
-            return jsonify(processing_status)
-        return jsonify({"status": "processing", "files": []})
+            processing_status = {"status": "completed", "files": file_urls}
+            print("extract files complete. (in web.py local_fetch_process())\n")
+        return jsonify(processing_status)
+    elif processing_status["status"] == "error":
+        return jsonify(processing_status)
+    return jsonify({"status": "processing", "files": []})
 
 
 @app.route("/download_mapping")

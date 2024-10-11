@@ -21,44 +21,54 @@
             event.preventDefault();
             const formData = new FormData(this);
             // send request
-            const response = await fetch("/fetch_game_resources", {
-                method: "POST",
-                body: formData
-            });
-
-            const result = await response.json();
-            // check local server processing progress
-            if (response.status === 202) {
+            try {
+                const response = await fetch("/fetch_game_resources", {
+                    method: "POST",
+                    headers: {
+                        "cache-control": "no-cache"
+                    },
+                    body: formData
+                });
+    
+                const result = await response.json();
+                // check local server processing progress
+                if (response.status === 202) {
+                    const statusMessage = document.getElementById("status-message");
+                    statusMessage.innerText = "資源擷取中，請稍候...";
+    
+                    const checkInterval = setInterval(async () => {
+                        const statusResponse = await fetch("/check_processing_status");
+                        const statusResult = await statusResponse.json();
+    
+                        if (statusResult.status === "completed") {
+                            clearInterval(checkInterval);
+                            statusMessage.innerText = "資源擷取完成！";
+    
+                            // show download link
+                            const fileListDiv = document.getElementById("file-list");
+                            fileListDiv.innerHTML = "";  // clear previous data
+                            statusResult.files.forEach(file => {
+                                const fileLink = document.createElement("a");
+                                fileLink.href = file.file_url;
+                                fileLink.innerText = `下載 ${file.file_name}`;
+                                fileLink.style.display = "block";
+                                fileListDiv.appendChild(fileLink);
+                            });
+                        } else if (statusResult.status === "error") {
+                            clearInterval(checkInterval);
+                            statusMessage.innerText = "處理過程中出現錯誤：" + statusResult.message;
+                        }
+                    }, 6000); // check every 6 seconds
+                } else {
+                    const statusMessage = document.getElementById("status-message");
+                    statusMessage.innerText = "發送請求失敗：" + result.error;
+                }
+            } 
+            catch(error) {
                 const statusMessage = document.getElementById("status-message");
-                statusMessage.innerText = "資源擷取中，請稍候...";
-
-                const checkInterval = setInterval(async () => {
-                    const statusResponse = await fetch("/check_processing_status");
-                    const statusResult = await statusResponse.json();
-
-                    if (statusResult.status === "completed") {
-                        clearInterval(checkInterval);
-                        statusMessage.innerText = "資源擷取完成！";
-
-                        // show download link
-                        const fileListDiv = document.getElementById("file-list");
-                        fileListDiv.innerHTML = "";  // clear previous data
-                        statusResult.files.forEach(file => {
-                            const fileLink = document.createElement("a");
-                            fileLink.href = file.file_url;
-                            fileLink.innerText = `下載 ${file.file_name}`;
-                            fileLink.style.display = "block";
-                            fileListDiv.appendChild(fileLink);
-                        });
-                    } else if (statusResult.status === "error") {
-                        clearInterval(checkInterval);
-                        statusMessage.innerText = "處理過程中出現錯誤：" + statusResult.message;
-                    }
-                }, 5000); // check every 5 seconds
-            } else {
-                const statusMessage = document.getElementById("status-message");
-                statusMessage.innerText = "發送請求失敗：" + result.error;
+                statusMessage.innerText = "網絡錯誤：" + error.message;
             }
+            
         };
     </script>
 </body>
