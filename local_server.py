@@ -608,8 +608,9 @@ def game_url_process():
                     f_path = os.path.join(files_dir, file_name)
                     if os.path.isfile(f_path):
                         zipf.write(f_path, arcname=file_name)
-            print("Compress complete\n")
+
             if os.path.exists(z_file):
+                print("Compress complete and return to web.\n")
                 return send_file(z_file, as_attachment=True)
             else:
                 print("Cannot find zip file at local.\n")

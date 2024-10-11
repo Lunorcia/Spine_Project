@@ -175,6 +175,9 @@ def local_fetch_process(game_url):
                         print(f"Failed to delete {file_path}. Reason: {e}")
             # get zip file
             print("Before getting zip file at web.\n")
+            if not os.path.exists(UNZIP_FOLDER):
+                print("Create unzip folder.\n")
+                os.makedirs(UNZIP_FOLDER)
             zip_file = os.path.join(UNZIP_FOLDER, "resources.zip")
             with open(zip_file, "wb") as z:
                 z.write(response.content)
@@ -183,6 +186,7 @@ def local_fetch_process(game_url):
             if os.path.exists(zip_file):
                 with zipfile.ZipFile(zip_file, "r") as z:
                     z.extractall(UNZIP_FOLDER)
+                    print("Extract zip complete.")
             else:
                 print("Cannot find zip file at web.\n")
 
