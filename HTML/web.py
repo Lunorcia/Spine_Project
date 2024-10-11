@@ -16,6 +16,7 @@ import mimetypes
 import json
 import shutil
 import threading
+from threading import Lock
 
 app = Flask(__name__, static_url_path="/static")
 
@@ -149,7 +150,7 @@ def enter_game_url():
 
 
 processing_status = {"status": "processing", "files": []}
-
+status_lock = threading.Lock()
 
 def local_fetch_process(game_url):
     global processing_status
@@ -193,25 +194,29 @@ def local_fetch_process(game_url):
                         print("Extract zip complete.\n")
                 else:
                     print("Cannot find zip file at web.\n")
-                print("Status change to complete.(in local_fetch_process)\n")
-                processing_status = {
-                    "status": "completed",
-                    "files": [],
-                }  # let check_processing_status() to fill files url list
+                with status_lock:
+                    print("Status change to complete.(in local_fetch_process)\n")
+                    processing_status = {
+                        "status": "completed",
+                        "files": [],
+                    }  # let check_processing_status() to fill files url list
 
             else:
-                print("Request failed. (in web.py local_fetch_process())\n")
-                processing_status = {"status": "error", "message": str(e)}
+                with status_lock:
+                    print("Request failed. (in web.py local_fetch_process())\n")
+                    processing_status = {"status": "error", "message": str(e)}
         except Exception as e:
-            print(f"fetch game url error: {str(e)}")
-            processing_status = {"status": "error", "message": str(e)}
+            with status_lock:
+                print(f"fetch game url error: {str(e)}")
+                processing_status = {"status": "error", "message": str(e)}
 
 
 @app.route("/fetch_game_resources", methods=["POST"])
 def fetch_game_resources():
     global processing_status
     game_url = request.form["game_url"]
-    processing_status = {"status": "processing", "files": []}  # init
+    with status_lock:
+        processing_status = {"status": "processing", "files": []}  # init
     print(f"Fetch start, init status: {processing_status["status"]}\n")
     local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
 
@@ -223,22 +228,23 @@ def fetch_game_resources():
 @app.route("/check_processing_status", methods=["GET"])
 def check_processing_status():
     global processing_status
-    if processing_status["status"] == "completed":
-        print("Checking status completed.\n")
-        files_list = os.listdir(UNZIP_FOLDER)
-        if len(files_list) > 0:
-            file_urls = []
-            for file_name in files_list:
-                file_url = url_for("download_file", folder="zip", filename=file_name)
-                file_urls.append({"file_name": file_name, "file_url": file_url})
-                
-            print("Status change to complete.(in check_processing_status)\n")
-            processing_status = {"status": "completed", "files": file_urls}
-            print("extract files complete. (in web.py local_fetch_process())\n")
-        return jsonify(processing_status)
-    elif processing_status["status"] == "error":
-        return jsonify(processing_status)
-    return jsonify({"status": "processing", "files": []})
+    with status_lock:
+        if processing_status["status"] == "completed":
+            print("Checking status completed.\n")
+            files_list = os.listdir(UNZIP_FOLDER)
+            if len(files_list) > 0:
+                file_urls = []
+                for file_name in files_list:
+                    file_url = url_for("download_file", folder="zip", filename=file_name)
+                    file_urls.append({"file_name": file_name, "file_url": file_url})
+                    
+                print("Status change to complete.(in check_processing_status)\n")
+                processing_status = {"status": "completed", "files": file_urls}
+                print("extract files complete. (in web.py local_fetch_process())\n")
+            return jsonify(processing_status)
+        elif processing_status["status"] == "error":
+            return jsonify(processing_status)
+        return jsonify({"status": "processing", "files": []})
 
 
 @app.route("/download_mapping")

@@ -1,2 +1,2 @@
-web: gunicorn --timeout 180 HTML.web:app
+web: gunicorn --timeout 120 HTML.web:app
 worker: python local_server.py
