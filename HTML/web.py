@@ -153,6 +153,7 @@ processing_status = {"status": "processing", "files": []}
 
 def local_fetch_process(game_url):
     global processing_status
+    processing_status = {"status": "processing", "files": []}
     with app.app_context():
         # send url to local server
         try:
@@ -210,11 +211,12 @@ def local_fetch_process(game_url):
 
 @app.route("/fetch_game_resources", methods=["POST"])
 def fetch_game_resources():
-    game_url = request.form["game_url"]
-
-    local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
     global processing_status
+    game_url = request.form["game_url"]
     processing_status = {"status": "processing", "files": []}  # init
+    print(f"Fetch start, init status: {processing_status["status"]}")
+    local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
+
     local_thread.start()
 
     return jsonify({"status": "processing"}), 202
