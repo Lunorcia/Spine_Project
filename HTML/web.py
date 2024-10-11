@@ -7,7 +7,6 @@ from flask import (
     redirect,
     jsonify,
     send_file,
-    current_app,
 )
 import pathlib
 import sys
@@ -18,6 +17,8 @@ import json
 import shutil
 import threading
 
+app = Flask(__name__, static_url_path="/static")
+from web import app
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -82,9 +83,6 @@ TEMPLATE_MAPPING = {
         },
     },
 }
-
-
-app = Flask(__name__, static_url_path="/static")
 
 
 def load_template_mapping():
@@ -155,7 +153,7 @@ processing_status = {"status": "processing", "files": []}
 
 
 def local_fetch_process(game_url):
-    with current_app.app_context:
+    with app.app_context:
         global processing_status
         processing_status = {"status": "processing", "files": []}  # init
         # send url to local server
