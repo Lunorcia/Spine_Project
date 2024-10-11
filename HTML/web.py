@@ -18,7 +18,6 @@ import shutil
 import threading
 
 app = Flask(__name__, static_url_path="/static")
-from web import app
 
 SRC_PATH = pathlib.Path(__file__).parent.absolute()  # (web.py)'s parent path = /HTML
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
