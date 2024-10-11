@@ -113,7 +113,6 @@ def Unzip(zip_file):
 
 def main():
     chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
     chrome_options.add_argument("--auto-open-devtools-for-tabs")
     chrome_options.add_argument(
         r"--user-data-dir=C:\Users\cyivs\AppData\Local\Google\Chrome\User Data"
