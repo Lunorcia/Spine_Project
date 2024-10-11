@@ -169,17 +169,6 @@ def local_fetch_process(game_url):
             )
 
             if response.status_code == 200:
-                # before write zip file, clear folder
-                if os.path.exists(UNZIP_FOLDER):
-                    for file_name in os.listdir(UNZIP_FOLDER):
-                        file_path = os.path.join(UNZIP_FOLDER, file_name)
-                        try:
-                            if os.path.isfile(file_path) or os.path.islink(file_path):
-                                os.unlink(file_path)  # 移除檔案或符號連結
-                            elif os.path.isdir(file_path):
-                                shutil.rmtree(file_path)  # 移除目錄及其內部內容
-                        except Exception as e:
-                            print(f"Failed to delete {file_path}. Reason: {e}")
                 # get zip file
                 if not os.path.exists(UNZIP_FOLDER):
                     print("Create unzip folder.\n")
@@ -218,6 +207,17 @@ def fetch_game_resources():
     with status_lock:
         processing_status = {"status": "processing", "files": []}  # init
     print(f"Fetch start, init status: {processing_status["status"]}\n")
+    # before write zip file, clear folder
+    if os.path.exists(UNZIP_FOLDER):
+        for file_name in os.listdir(UNZIP_FOLDER):
+            file_path = os.path.join(UNZIP_FOLDER, file_name)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)  # 移除檔案或符號連結
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)  # 移除目錄及其內部內容
+            except Exception as e:
+                print(f"Failed to delete {file_path}. Reason: {e}")
     local_thread = threading.Thread(target=local_fetch_process, args=(game_url,))
 
     local_thread.start()
@@ -241,7 +241,7 @@ def check_processing_status():
                 print("Status change to complete.(in check_processing_status)\n")
                 processing_status = {"status": "completed", "files": file_urls}
                 print("extract files complete. (in web.py local_fetch_process())\n")
-            return jsonify(processing_status)
+                return jsonify(processing_status)
         elif processing_status["status"] == "error":
             return jsonify(processing_status)
         processing_status = {"status": "processing", "files": []}

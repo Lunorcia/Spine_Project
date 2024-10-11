@@ -19,6 +19,13 @@
     <script>
         document.getElementById("game-url-form").onsubmit = async function(event) {
             event.preventDefault();
+
+            // Clear the previous file list and status message before sending the new request
+            const fileListDiv = document.getElementById("file-list");
+            fileListDiv.innerHTML = "";  // clear previous urls
+            const statusMessage = document.getElementById("status-message");
+            statusMessage.innerText = "";  // clear previous status messages
+
             const formData = new FormData(this);
             // send request
             try {
@@ -66,7 +73,7 @@
             } 
             catch(error) {
                 const statusMessage = document.getElementById("status-message");
-                statusMessage.innerText = "網絡錯誤：" + error.message;
+                statusMessage.innerText = "網路錯誤：" + error.message;
             }
             
         };
