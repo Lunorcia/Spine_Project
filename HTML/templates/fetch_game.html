@@ -60,7 +60,8 @@
                             fileListDiv.innerHTML = "";  // clear previous data
                             statusResult.files.forEach(file => {
                                 //if file is json, add button
-                                if(file.file_name.endswith(".json"))
+                                const fileName = String(file.file_name);
+                                if(fileName.endswith(".json"))
                                 {
                                     const fileRowDiv = document.createElement("div");
                                     fileRowDiv.style.display = "flex";
