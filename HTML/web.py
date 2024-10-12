@@ -389,8 +389,8 @@ def add_template():
     json_file_path = request.form.get("jsonFilePath")
     gif_file_path = request.form.get("gifFilePath")
 
-    if json_file_path:
-        # if web send json file's path, then do not generate gif
+    if json_file_path and gif_file_path:
+        # if web send json file's path and gif file, then do not generate gif
         return save_json_template(
             existing_type,
             new_type_checkbox,
