@@ -449,6 +449,47 @@ def add_template():
 
         return redirect(url_for("index"))
 
+    # only json_path (send from fetch_game page)
+    elif json_file_path:
+        print(f"json_file_path at: {json_file_path}\n")
+        if not os.path.exists(json_file_path):
+            print("Json path error.\n")
+            return "Json file path doesn't exist.", 400
+        if not json_file_path.endswith(".json"):
+            print("Json end format error.\n")
+            return "Invalid file type. Please upload a .json file.", 400
+        
+        # Save the uploaded template file
+        if not os.path.exists(UPLOADED_JSON_FILE_FOLDER):
+            os.makedirs(UPLOADED_JSON_FILE_FOLDER)
+        file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, os.path.basename(json_file_path))
+        shutil.copy(json_file_path, file_path)
+        
+        # generate preview gif
+        preview_file_name = f"{new_template_name}.gif"
+        preview_file_path = os.path.join(
+            SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
+        )
+        # connect local server
+        generate_preview_gif(file_path, preview_file_path)
+
+        # Update the TEMPLATE_MAPPING
+        mapping = load_template_mapping()
+        new_template_data = {
+            "file": file_path,
+            "gifUrl": url_for(
+                "static", filename=f"Image/PreviewGIF/{preview_file_name}"
+            ),
+        }
+        if animation_type in mapping:
+            mapping[animation_type][new_template_name] = new_template_data
+        else:
+            mapping[animation_type] = {new_template_name: new_template_data}
+
+        save_template_mapping(mapping)
+
+        return redirect(url_for("index"))
+
     else:
         return "Invalid file type. Please upload a .json file.", 400
 
