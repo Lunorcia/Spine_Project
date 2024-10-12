@@ -70,7 +70,7 @@
                                     templateButton.innerText = "新增為模板";
                                     templateButton.style.marginRight = "10px";
                                     templateButton.onclick = function(){
-                                        window.location.href = `/add_template_page?json_path=${encodeURIComponent(file.file_url)}`;
+                                        window.location.href = `/add_template_page?json_path=${encodeURIComponent(file.file_url)}&gif_path=`;
                                     };
                                     fileListDiv.appendChild(templateButton);
                                     const fileLink = document.createElement("a");

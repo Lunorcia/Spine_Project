@@ -134,8 +134,9 @@ def add_template_page():
     mapping = load_template_mapping()
     # if adjust_template_page send json file path, return file to add_template_page
     new_json_template = request.args.get("json_path")
+    gif_file_path = request.args.get('gif_path', '')
     return render_template(
-        "add_template.html", templates=mapping, json_path=new_json_template
+        "add_template.html", templates=mapping, json_path=new_json_template, gif_path=gif_file_path
     )
 
 
