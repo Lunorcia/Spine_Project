@@ -129,7 +129,7 @@ def index():
     )
 
 
-@app.route("/add_template_page")
+@app.route("/add_template_page", methods=["GET", "POST"])
 def add_template_page():
     mapping = load_template_mapping()
     # if adjust_template_page send json file path, return file to add_template_page
