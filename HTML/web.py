@@ -237,7 +237,21 @@ def check_processing_status():
                 for file_name in files_list:
                     file_url = url_for("download_file", folder="zip", filename=file_name)
                     file_urls.append({"file_name": file_name, "file_url": file_url})
-                    
+                
+                # sorting seq: zip -> json -> png -> atlas
+                def file_sort_key(file_info):
+                    if file_info["file_name"].endswith(".zip"):
+                        return 0
+                    elif file_info["file_name"].endswith(".json"):
+                        return 1
+                    elif file_info["file_name"].endswith(".png"):
+                        return 2
+                    elif file_info["file_name"].endswith(".atlas"):
+                        return 3
+                    return 4
+                
+                file_urls.sort(key=file_sort_key)
+                
                 print("Status change to complete.(in check_processing_status)\n")
                 processing_status = {"status": "completed", "files": file_urls}
                 print("extract files complete. (in web.py local_fetch_process())\n")

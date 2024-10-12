@@ -6,6 +6,10 @@
     <title>擷取遊戲動畫</title>
 </head>
 <body>
+    <a href="{{ url_for('index') }}">
+        <img src="{{url_for('static',filename='Image/back_icon.png')}}" alt="Back to homepage" style="width:30px; height:30px; position: absolute; margin-bottom:10px; top: 10px; left: 10px; cursor: pointer;">
+    </a>
+
     <h2>輸入遊戲網址(PG Soft only)以擷取資源</h2>
     <form id="game-url-form" method="post">
         <label for="game_url">遊戲網址:</label>
@@ -55,18 +59,45 @@
                             const fileListDiv = document.getElementById("file-list");
                             fileListDiv.innerHTML = "";  // clear previous data
                             statusResult.files.forEach(file => {
-                                const fileLink = document.createElement("a");
-                                fileLink.href = file.file_url;
-                                fileLink.innerText = `下載 ${file.file_name}`;
-                                fileLink.style.display = "block";
-                                fileListDiv.appendChild(fileLink);
+                                //if file is json, add button
+                                if(file.file_name.endswith(".json"))
+                                {
+                                    const fileRowDiv = document.createElement("div");
+                                    fileRowDiv.style.display = "flex";
+
+                                    const templateButton = document.createElement("Button");
+                                    templateButton.innerText = "新增為模板";
+                                    templateButton.style.marginRight = "10px";
+                                    templateButton.onclick = function(){
+                                        window.location.href = `/add_template?json_path=${encodeURIComponent(file.file_url)}`;
+                                    };
+                                    fileListDiv.appendChild(templateButton);
+                                    const fileLink = document.createElement("a");
+                                    fileLink.href = file.file_url;
+                                    fileLink.innerText = `下載 ${file.file_name}`;
+                                    fileLink.style.display = "inline-block";
+
+                                    fileRowDiv.appendChild(templateButton);
+                                    fileRowDiv.appendChild(fileLink);
+                                    fileListDiv.appendChild(fileRowDiv);
+                                }
+                                else //only download link
+                                {
+                                    const fileLink = document.createElement("a");
+                                    fileLink.href = file.file_url;
+                                    fileLink.innerText = `下載 ${file.file_name}`;
+                                    fileLink.style.display = "block";
+                                    fileListDiv.appendChild(fileLink);
+                                }
                             });
-                        } else if (statusResult.status === "error") {
+                        }
+                        else if (statusResult.status === "error") {
                             clearInterval(checkInterval);
                             statusMessage.innerText = "處理過程中出現錯誤：" + statusResult.message;
                         }
                     }, 6000); // check every 6 seconds
-                } else {
+                }
+                else {
                     const statusMessage = document.getElementById("status-message");
                     statusMessage.innerText = "發送請求失敗：" + result.error;
                 }
