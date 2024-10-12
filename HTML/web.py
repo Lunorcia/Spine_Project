@@ -237,7 +237,8 @@ def check_processing_status():
                 file_urls = []
                 for file_name in files_list:
                     file_url = url_for("download_file", folder="zip", filename=file_name)
-                    file_urls.append({"file_name": file_name, "file_url": file_url})
+                    file_path = os.path.join(UNZIP_FOLDER, file_name)
+                    file_urls.append({"file_name": file_name, "file_url": file_url, "file_path": file_path})
                 
                 # sorting seq: zip -> json -> png -> atlas
                 def file_sort_key(file_info):
