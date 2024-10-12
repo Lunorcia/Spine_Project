@@ -10,7 +10,7 @@
         <img src="{{url_for('static',filename='Image/back_icon.png')}}" alt="Back to homepage" style="width:30px; height:30px; position: absolute; margin-bottom:10px; top: 10px; left: 10px; cursor: pointer;">
     </a>
 
-    <h2>輸入遊戲網址(PG Soft only)以擷取資源</h2>
+    <h2 style="margin-top:40px;">輸入遊戲網址(PG Soft only)以擷取資源</h2>
     <form id="game-url-form" method="post">
         <label for="game_url">遊戲網址:</label>
         <input type="text" id="game_url" name="game_url" required>
@@ -61,7 +61,7 @@
                             statusResult.files.forEach(file => {
                                 //if file is json, add button
                                 const fileName = String(file.file_name);
-                                if(fileName.endswith(".json"))
+                                if(fileName.endsWith(".json"))
                                 {
                                     const fileRowDiv = document.createElement("div");
                                     fileRowDiv.style.display = "flex";
