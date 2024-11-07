@@ -31,8 +31,50 @@
     </style>
 
     <script>
+        const templates = {{ templates | tojson }};
+        function UpdateSecondDropdown() 
+        {
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            const templateSelect = document.getElementById("templateSelect");
+            const selectedType = animationTypeSelect.value;
+            
+            // Clear the second dropdown
+            templateSelect.innerHTML = "";
+            
+            // Populate the second dropdown based on the selected type
+            for (const [templateName, templateFile] of Object.entries(templates[selectedType])) {
+                const option = document.createElement("option");
+                option.value = templateName;
+                option.text = templateName;
+                templateSelect.appendChild(option);
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () 
         {
+            const existingTemplateCheckbox = document.getElementById("existingTemplateCheckbox");
+            const animationTypeSelect = document.getElementById("animationTypeSelect");
+            const templateSelect = document.getElementById("templateSelect");
+            const jsonFileInput = document.getElementById("json_file");
+
+            // Init: enable dropdown, disable upload json file
+            animationTypeSelect.disabled = false;
+            templateSelect.disabled = false;
+            jsonFileInput.disabled = true;
+            jsonFileInput.required = false;
+            // Switch enable state
+            existingTemplateCheckbox.addEventListener("change", function(){
+                const isChecked = existingTemplateCheckbox.checked;
+                animationTypeSelect.disabled = isChecked;
+                templateSelect.disabled = isChecked;
+                jsonFileInput.disabled = !isChecked;
+                jsonFileInput.required = isChecked;
+            });
+
+            // Initialize the second dropdown when the page loads
+            UpdateSecondDropdown();
+            animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
+
             const scaleRange = document.getElementById("scale_range");
             const scaleValue = document.getElementById("scale_value");
             const scaleInput = document.getElementById("scale_factor");
@@ -52,6 +94,22 @@
     <h1 style="margin-top:40px;">調整模板網格</h1>
     <div class="form-container">
         <form action="/adjust_template" method="post" enctype="multipart/form-data">
+            <h3>可從既有模板選擇或自行上傳模板</h3>
+            <input type="checkbox" id="existingTemplateCheckbox" name="existingTemplateCheckbox">
+            <label for="existingTemplateCheckbox">自行上傳模板文件</label><br><br>
+
+            <label for="animationTypeSelect">選擇動畫類型：</label>
+            <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
+                {% for type in templates.keys() %}
+                    <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="templateSelect">選擇動畫模板：</label>
+            <select id="templateSelect" name="template">
+                <!-- This will be populated based on the first dropdown -->
+            </select><br><br>
+
             <label for="json_file">上傳模板文件(.json):</label>
             <input type="file" id="json_file" name="json_file" accept=".json" required><br><br>
             

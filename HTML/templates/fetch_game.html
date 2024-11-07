@@ -63,24 +63,24 @@
                                 const fileName = String(file.file_name);
                                 if(fileName.endsWith(".json"))
                                 {
-                                    const fileRowDiv = document.createElement("div");
-                                    fileRowDiv.style.display = "flex";
+                                    // const fileRowDiv = document.createElement("div");
+                                    // fileRowDiv.style.display = "flex";
 
-                                    const templateButton = document.createElement("Button");
-                                    templateButton.innerText = "新增為模板";
-                                    templateButton.style.marginRight = "10px";
-                                    templateButton.onclick = function(){
-                                        window.location.href = `/add_template_page?json_path=${encodeURIComponent(file.file_path)}&gif_path=`;
-                                    };
-                                    fileListDiv.appendChild(templateButton);
+                                    // const templateButton = document.createElement("Button");
+                                    // templateButton.innerText = "新增為模板";
+                                    // templateButton.style.marginRight = "10px";
+                                    // templateButton.onclick = function(){
+                                    //     window.location.href = `/add_template_page?json_path=${encodeURIComponent(file.file_path)}&gif_path=`;
+                                    // };
+                                    // fileListDiv.appendChild(templateButton);
                                     const fileLink = document.createElement("a");
                                     fileLink.href = file.file_url;
                                     fileLink.innerText = `下載 ${file.file_name}`;
                                     fileLink.style.display = "inline-block";
 
-                                    fileRowDiv.appendChild(templateButton);
+                                    // fileRowDiv.appendChild(templateButton);
                                     fileRowDiv.appendChild(fileLink);
-                                    fileListDiv.appendChild(fileRowDiv);
+                                    // fileListDiv.appendChild(fileRowDiv);
                                 }
                                 else //only download link
                                 {

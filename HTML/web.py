@@ -29,10 +29,10 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://03ae-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://03ae-219-70-173-170.ngrok-free.app/mesh_process"
-LOCAL_SERVER_MAPPING = "https://03ae-219-70-173-170.ngrok-free.app/mapping_process"
-LOCAL_SERVER_GAME = "https://03ae-219-70-173-170.ngrok-free.app/game_url_process"
+LOCAL_SERVER_MAIN = "https://78c2-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://78c2-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://78c2-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_GAME = "https://78c2-219-70-173-170.ngrok-free.app/game_url_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -134,15 +134,19 @@ def add_template_page():
     mapping = load_template_mapping()
     # if adjust_template_page send json file path, return file to add_template_page
     new_json_template = request.args.get("json_path")
-    gif_file_path = request.args.get('gif_path', '')
+    gif_file_path = request.args.get("gif_path", "")
     return render_template(
-        "add_template.html", templates=mapping, json_path=new_json_template, gif_path=gif_file_path
+        "add_template.html",
+        templates=mapping,
+        json_path=new_json_template,
+        gif_path=gif_file_path,
     )
 
 
 @app.route("/adjust_template_page")
 def adjust_template_page():
-    return render_template("adjust_template.html")
+    mapping = load_template_mapping()
+    return render_template("adjust_template.html", templates=mapping)
 
 
 @app.route("/enter_game_url")
@@ -152,6 +156,7 @@ def enter_game_url():
 
 processing_status = {"status": "processing", "files": []}
 status_lock = threading.Lock()
+
 
 def local_fetch_process(game_url):
     global processing_status
@@ -194,7 +199,10 @@ def local_fetch_process(game_url):
             else:
                 with status_lock:
                     print("Request failed. (in web.py local_fetch_process())\n")
-                    processing_status = {"status": "error", "message": "local_server return error"}
+                    processing_status = {
+                        "status": "error",
+                        "message": "local_server return error",
+                    }
         except Exception as e:
             with status_lock:
                 print(f"fetch game url error: {str(e)}")
@@ -236,10 +244,18 @@ def check_processing_status():
             if len(files_list) > 0:
                 file_urls = []
                 for file_name in files_list:
-                    file_url = url_for("download_file", folder="zip", filename=file_name)
+                    file_url = url_for(
+                        "download_file", folder="zip", filename=file_name
+                    )
                     file_path = os.path.join(UNZIP_FOLDER, file_name)
-                    file_urls.append({"file_name": file_name, "file_url": file_url, "file_path": file_path})
-                
+                    file_urls.append(
+                        {
+                            "file_name": file_name,
+                            "file_url": file_url,
+                            "file_path": file_path,
+                        }
+                    )
+
                 # sorting seq: zip -> json -> png -> atlas
                 def file_sort_key(file_info):
                     if file_info["file_name"].endswith(".zip"):
@@ -251,9 +267,9 @@ def check_processing_status():
                     elif file_info["file_name"].endswith(".atlas"):
                         return 3
                     return 4
-                
+
                 file_urls.sort(key=file_sort_key)
-                
+
                 print("Status change to complete.(in check_processing_status)\n")
                 processing_status = {"status": "completed", "files": file_urls}
                 print("extract files complete. (in web.py local_fetch_process())\n")
@@ -459,13 +475,15 @@ def add_template():
         if not json_file_path.endswith(".json"):
             print("Json end format error.\n")
             return "Invalid file type. Please upload a .json file.", 400
-        
+
         # Save the uploaded template file
         if not os.path.exists(UPLOADED_JSON_FILE_FOLDER):
             os.makedirs(UPLOADED_JSON_FILE_FOLDER)
-        file_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, os.path.basename(json_file_path))
+        file_path = os.path.join(
+            UPLOADED_JSON_FILE_FOLDER, os.path.basename(json_file_path)
+        )
         shutil.copy(json_file_path, file_path)
-        
+
         # generate preview gif
         preview_file_name = f"{new_template_name}.gif"
         preview_file_path = os.path.join(
@@ -596,16 +614,44 @@ def generate_preview_gif(json_file_path, preview_gif_path):
 def adjust_template():
     # 取得表單上傳的文件
     uploaded_image = request.files["image_file"]
-    uploaded_json = request.files["json_file"]
     scale_factor = float(request.form.get("scale_factor", 2.0))
     if not uploaded_image or not uploaded_image:
         return "Please upload both JSON and image files then try again.", 400
 
-    # 將檔案儲存到伺服器
+    # 選擇既有模板或使用者自行上傳模板
+    use_existing_template = request.form.get("existingTemplateCheckbox") == "on"
+    saved_json_path = ""
+    if use_existing_template:
+        uploaded_json = request.files.get("json_file")
+        # 將模板檔案儲存到伺服器
+        saved_json_path = os.path.join(
+            UPLOADED_JSON_FILE_FOLDER, uploaded_json.filename
+        )
+        uploaded_json.save(saved_json_path)
+
+    else:
+        selected_type = request.form["animationType"]
+        selected_template = request.form["template"]
+        # choose template json
+        mapping = load_template_mapping()
+        type_dict = mapping.get(selected_type)
+        template_data = type_dict.get(selected_template)
+        template_json_path = template_data.get("file")
+        if not template_json_path or not os.path.exists(template_json_path):
+            print("template doesn't exist\n")
+            json_filename = "animation.json"
+            template_json_path = os.path.join(JSON_FILE_FOLDER, json_filename)
+        else:
+            print(f"template path: {template_json_path}\n")
+        # 將模板檔案儲存到伺服器
+        saved_json_path = os.path.join(
+            UPLOADED_JSON_FILE_FOLDER, os.path.basename(template_json_path)
+        )
+        shutil.copy(template_json_path, saved_json_path)
+
+    # 將圖片檔案儲存到伺服器
     saved_img_path = os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename)
-    saved_json_path = os.path.join(UPLOADED_JSON_FILE_FOLDER, uploaded_json.filename)
     uploaded_image.save(saved_img_path)
-    uploaded_json.save(saved_json_path)
 
     enlargeMesh.SetImgPath(saved_img_path)
     enlargeMesh.SetJsonPath(saved_json_path)
