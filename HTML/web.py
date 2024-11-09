@@ -697,6 +697,7 @@ def adjust_template():
                     img_download_link=img_download_url,
                     json_file_path=modified_json_file,
                     gif_file_path=output_gif_path,
+                    templates=mapping,
                 )
             else:
                 print("Request failed.\n")
