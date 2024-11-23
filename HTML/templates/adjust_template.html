@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>調整模板</title>
     <style>
+        .container {
+            display: flex;
+        }
+        .form-container {
+            flex: 1;
+        }
         .file-download {
             text-align: center;
             margin-top: 20px;
         }
         .download-container {
+            flex: 1;
             display: inline-block;
+            padding-left: 20px;
             margin-right: 20px;
         }
         .download-container img {
@@ -92,72 +100,75 @@
     </a>
 
     <h1 style="margin-top:40px;">調整模板網格</h1>
-    <div class="form-container">
-        <form action="/adjust_template" method="post" enctype="multipart/form-data">
-            <h3>可從既有模板選擇或自行上傳模板</h3>
-            <input type="checkbox" id="existingTemplateCheckbox" name="existingTemplateCheckbox">
-            <label for="existingTemplateCheckbox">自行上傳模板文件</label><br><br>
-
-            <label for="animationTypeSelect">選擇動畫類型：</label>
-            <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
-                {% for type in templates.keys() %}
-                    <option value="{{ type }}">{{ type }}</option>
-                {% endfor %}
-            </select><br><br>
-
-            <label for="templateSelect">選擇動畫模板：</label>
-            <select id="templateSelect" name="template">
-                <!-- This will be populated based on the first dropdown -->
-            </select><br><br>
-
-            <label for="json_file">上傳模板文件(.json):</label>
-            <input type="file" id="json_file" name="json_file" accept=".json" required><br><br>
-            
-            <label for="image_file">上傳圖片(.png):</label>
-            <input type="file" id="image_file" name="image_file" accept=".png" required><br><br>
-            
-            <label for="scale_range">網格調整倍數:</label>
-            <input type="range" id="scale_range" name="scale_range" min="1.0" max="3.0" step="0.1" value="2.0">
-            <span id="scale_value">2.0</span>
-            <input type="hidden" id="scale_factor" name="scale_factor" value="2.0"><br><br>
-
-            <input type="submit" value="確認調整">
-        </form>
+    <div class="container">
+        <div class="form-container">
+            <form action="/adjust_template" method="post" enctype="multipart/form-data">
+                <h3>可從既有模板選擇或自行上傳模板</h3>
+                <input type="checkbox" id="existingTemplateCheckbox" name="existingTemplateCheckbox">
+                <label for="existingTemplateCheckbox">自行上傳模板文件</label><br><br>
+    
+                <label for="animationTypeSelect">選擇動畫類型：</label>
+                <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
+                    {% for type in templates.keys() %}
+                        <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select><br><br>
+    
+                <label for="templateSelect">選擇動畫模板：</label>
+                <select id="templateSelect" name="template">
+                    <!-- This will be populated based on the first dropdown -->
+                </select><br><br>
+    
+                <label for="json_file">上傳模板文件(.json):</label>
+                <input type="file" id="json_file" name="json_file" accept=".json" required><br><br>
+                
+                <label for="image_file">上傳圖片(.png):</label>
+                <input type="file" id="image_file" name="image_file" accept=".png" required><br><br>
+                
+                <label for="scale_range">網格調整倍數:</label>
+                <input type="range" id="scale_range" name="scale_range" min="1.0" max="3.0" step="0.1" value="2.0">
+                <span id="scale_value">2.0</span>
+                <input type="hidden" id="scale_factor" name="scale_factor" value="2.0"><br><br>
+    
+                <input type="submit" value="確認調整">
+            </form>
+        </div>
+        <div class="file-download">
+            {% if gif_web_url %}
+                <img id="animationGIF" src="{{gif_web_url}}" alt="Generated Animation"><br><br>
+            {% endif %}
+    
+            <div class="download-container">
+                {% if json_download_link %}
+                <a href="{{json_download_link}}" download>
+                    <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
+                </a>
+                <p>點擊圖示下載調整後的模板(.json)</p><br><br>
+                {% else %}
+                <p>No template adjusted yet.</p><br><br>
+                {% endif %}
+            </div>
+    
+            <div class="download-container">
+                {% if img_download_link %}
+                <a href="{{img_download_link}}" download>
+                    <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
+                </a>
+                <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
+                {% else %}
+                <p>No image adjusted yet.</p><br><br>
+                {% endif %}
+            </div>
+    
+            <div class="add-template-container">
+                {% if json_download_link and gif_web_url %}
+                <a href="{{url_for('add_template_page', json_path=json_file_path, gif_path=gif_file_path)}}">
+                    <button type="button">添加為新模板</button>
+                </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="file-download">
-        {% if gif_web_url %}
-            <img id="animationGIF" src="{{gif_web_url}}" alt="Generated Animation"><br><br>
-        {% endif %}
 
-        <div class="download-container">
-            {% if json_download_link %}
-            <a href="{{json_download_link}}" download>
-                <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download JSON">
-            </a>
-            <p>點擊圖示下載調整後的模板(.json)</p><br><br>
-            {% else %}
-            <p>No template adjusted yet.</p><br><br>
-            {% endif %}
-        </div>
-
-        <div class="download-container">
-            {% if img_download_link %}
-            <a href="{{img_download_link}}" download>
-                <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Image">
-            </a>
-            <p>點擊圖示下載調整後的圖片(.png)</p><br><br>
-            {% else %}
-            <p>No image adjusted yet.</p><br><br>
-            {% endif %}
-        </div>
-
-        <div class="add-template-container">
-            {% if json_download_link and gif_web_url %}
-            <a href="{{url_for('add_template_page', json_path=json_file_path, gif_path=gif_file_path)}}">
-                <button type="button">添加為新模板</button>
-            </a>
-            {% endif %}
-        </div>
-    </div>
 </body>
 </html>
