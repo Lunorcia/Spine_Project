@@ -193,7 +193,7 @@
                 <p>No GIF generated yet.</p>
             {% endif %}
         </div>
-        <div class="download-container">
+        {% comment %} <div class="download-container">
             <a href="{{ url_for('download_mapping') }}">
                 <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Mapping" style="width: 50px; height: 50px; cursor: pointer;">
             </a>
@@ -203,7 +203,7 @@
                 <img src="{{url_for('static',filename='Image/download_icon.png')}}" alt="Download Mapping" style="width: 50px; height: 50px; cursor: pointer;">
             </a>
             <p>點擊圖示下載所有模板文件(.json)</p><br><br>
-        </div>
+        </div> {% endcomment %}
     </div>
 </body>
 </html>
