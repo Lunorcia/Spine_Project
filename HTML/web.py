@@ -612,6 +612,7 @@ def generate_preview_gif(json_file_path, preview_gif_path):
 
 @app.route("/adjust_template", methods=["POST"])
 def adjust_template():
+    mapping = load_template_mapping()
     # 取得表單上傳的文件
     uploaded_image = request.files["image_file"]
     scale_factor = float(request.form.get("scale_factor", 2.0))
@@ -633,7 +634,6 @@ def adjust_template():
         selected_type = request.form["animationType"]
         selected_template = request.form["template"]
         # choose template json
-        mapping = load_template_mapping()
         type_dict = mapping.get(selected_type)
         template_data = type_dict.get(selected_template)
         template_json_path = template_data.get("file")
