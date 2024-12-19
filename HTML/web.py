@@ -126,17 +126,7 @@ def index():
     #             "static", filename=f"Image/PreviewGIF/{t_name}.gif"
     #         )
     return render_template(
-        "anim.html",
-        image_web_url="",
-        gif_web_url="",
-        templates=mapping,
-        selected_letter="A",
-        selected_template=None,
-        selected_type=None,
-        intensity_translate=1.0,
-        intensity_scale=1.0,
-        intensity_rotate=1.0,
-        speed=1.0,
+        "anim.html", image_web_url="", gif_web_url="", templates=mapping
     )
 
 
@@ -399,13 +389,6 @@ def upload():
                     image_web_url=img_url,
                     gif_web_url=gif_url,
                     templates=mapping,
-                    selected_letter=request.form.get("letter"),
-                    selected_template=request.form.get("template"),
-                    selected_type=request.form.get("animationType"),
-                    intensity_translate=request.form.get("intensityTranslate", 1.0),
-                    intensity_scale=request.form.get("intensityScale", 1.0),
-                    intensity_rotate=request.form.get("intensityRotate", 1.0),
-                    speed=request.form.get("speed", 1.0),
                 )
             else:
                 print("Request failed.\n")
@@ -414,13 +397,6 @@ def upload():
                     error_message="Failed to process animation in Spine2D.",
                     image_web_url=img_url,
                     templates=mapping,
-                    selected_letter=request.form.get("letter"),
-                    selected_template=request.form.get("template"),
-                    selected_type=request.form.get("animationType"),
-                    intensity_translate=request.form.get("intensityTranslate", 1.0),
-                    intensity_scale=request.form.get("intensityScale", 1.0),
-                    intensity_rotate=request.form.get("intensityRotate", 1.0),
-                    speed=request.form.get("speed", 1.0),
                 )
                 # return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
@@ -429,13 +405,6 @@ def upload():
             error_message=f"Local server transmission error: {str(e)}",
             image_web_url=img_url,
             templates=mapping,
-            selected_letter=request.form.get("letter"),
-            selected_template=request.form.get("template"),
-            selected_type=request.form.get("animationType"),
-            intensity_translate=request.form.get("intensityTranslate", 1.0),
-            intensity_scale=request.form.get("intensityScale", 1.0),
-            intensity_rotate=request.form.get("intensityRotate", 1.0),
-            speed=request.form.get("speed", 1.0),
         )
         # return jsonify({"error": str(e)}), 500
 
