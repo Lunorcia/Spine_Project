@@ -31,6 +31,7 @@
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             const templateSelect = document.getElementById("templateSelect");
             const selectedType = animationTypeSelect.value;
+            const previousSelectedTemplate = "{{selected_template}}";    // sent from backend
             
             // Clear the second dropdown
             templateSelect.innerHTML = "";
@@ -40,6 +41,11 @@
                 const option = document.createElement("option");
                 option.value = templateName;
                 option.text = templateName;
+
+                if (templateName == previousSelectedTemplate)
+                {
+                    option.selected = true;
+                }
                 templateSelect.appendChild(option);
             }
 
@@ -69,12 +75,17 @@
         document.addEventListener("DOMContentLoaded", function () 
         {
             // Initialize the second dropdown when the page loads
-            UpdateSecondDropdown();
             const animationTypeSelect = document.getElementById("animationTypeSelect");
             animationTypeSelect.addEventListener('change', UpdateSecondDropdown);
             // Update preview gif when template selected changes
             const templateSelect = document.getElementById("templateSelect");
             templateSelect.addEventListener('change', UpdatePreviewGif);
+            const previousSelectedType = "{{ selected_type }}";
+            if (previousSelectedType) 
+            {
+                animationTypeSelect.value = previousSelectedType;
+            }
+            UpdateSecondDropdown();
             
 
             function updateIntensityValue(rangeID, valueID, inputID) {
@@ -93,17 +104,24 @@
                 speedInput.value = speedRange.value;
             }
 
+
+
             const speedRange = document.getElementById('speedRange');
             speedRange.addEventListener('input', updateSpeedValue);
-            updateSpeedValue();
-
-            updateIntensityValue('intensityTranslateRange', 'intensityTranslateValue', 'intensityTranslate');
-            updateIntensityValue('intensityScaleRange', 'intensityScaleValue', 'intensityScale');
-            updateIntensityValue('intensityRotateRange', 'intensityRotateValue', 'intensityRotate');
 
             const translateRange = document.getElementById('intensityTranslateRange');
             const scaleRange = document.getElementById('intensityScaleRange');
             const rotateRange = document.getElementById('intensityRotateRange');
+            // Initialize intensity text value
+            document.getElementById("intensityTranslateValue").textContent = translateRange.value;
+            document.getElementById("intensityScaleValue").textContent = scaleRange.value;
+            document.getElementById("intensityRotateValue").textContent = rotateRange.value;
+            document.getElementById("speedValue").textContent = speedRange.value;
+
+            updateSpeedValue();
+            updateIntensityValue('intensityTranslateRange', 'intensityTranslateValue', 'intensityTranslate');
+            updateIntensityValue('intensityScaleRange', 'intensityScaleValue', 'intensityScale');
+            updateIntensityValue('intensityRotateRange', 'intensityRotateValue', 'intensityRotate');
 
             translateRange.addEventListener('input', function() {
                 updateIntensityValue('intensityTranslateRange', 'intensityTranslateValue', 'intensityTranslate');
@@ -121,6 +139,13 @@
 </head>
 <body>
     <h1>Animation Generator</h1>
+
+    {% if error_message %}
+    <script>
+        alert("{{error_message}}");
+    </script>
+    {%endif%}
+
     <div class="container">
         <div class="form-container">
             
@@ -134,16 +159,16 @@
 
                 <label for="letterSelect">選擇字母：</label>
                 <select id="letterSelect" name="letter" required>
-                    <option value="A">A</option>
-                    <option value="K">K</option>
-                    <option value="Q">Q</option>
-                    <option value="J">J</option>
+                    <option value="A" {% if selected_letter == "A" %}selected{% endif %}>A</option>
+                    <option value="K" {% if selected_letter == "K" %}selected{% endif %}>K</option>
+                    <option value="Q" {% if selected_letter == "Q" %}selected{% endif %}>Q</option>
+                    <option value="J" {% if selected_letter == "J" %}selected{% endif %}>J</option>
                 </select><br><br>
 
                 <label for="animationTypeSelect">選擇動畫類型：</label>
                 <select id="animationTypeSelect" name="animationType" required onchange="UpdateSecondDropdown()">
                     {% for type in templates.keys() %}
-                        <option value="{{ type }}">{{ type }}</option>
+                        <option value="{{ type }}" {% if selected_type == type %}selected{% endif %}>{{ type }}</option>
                     {% endfor %}
                 </select><br><br>
 
@@ -153,23 +178,23 @@
                 </select><br><br>
 
                 <label for="intensityTranslateRange">Translate Intensity:</label>
-                <input type="range" id="intensityTranslateRange" name="intensityTranslateRange" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span id="intensityTranslateValue">1.0</span>
+                <input type="range" id="intensityTranslateRange" name="intensityTranslateRange" min="0.1" max="2.0" step="0.1" value="{{ intensity_translate | default(1.0) }}">
+                <span id="intensityTranslateValue">{{ intensity_translate | default(1.0) }}</span>
                 <input type="hidden" id="intensityTranslate" name="intensityTranslate" value="1.0"><br><br>
 
                 <label for="intensityScaleRange">Scale Intensity:</label>
-                <input type="range" id="intensityScaleRange" name="intensityScaleRange" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span id="intensityScaleValue">1.0</span>
+                <input type="range" id="intensityScaleRange" name="intensityScaleRange" min="0.1" max="2.0" step="0.1" value="{{ intensity_scale | default(1.0) }}">
+                <span id="intensityScaleValue">{{ intensity_scale | default(1.0) }}</span>
                 <input type="hidden" id="intensityScale" name="intensityScale" value="1.0"><br><br>
 
                 <label for="intensityRotateRange">Rotate Intensity:</label>
-                <input type="range" id="intensityRotateRange" name="intensityRotateRange" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span id="intensityRotateValue">1.0</span>
+                <input type="range" id="intensityRotateRange" name="intensityRotateRange" min="0.1" max="2.0" step="0.1" value="{{ intensity_rotate  | default(1.0) }}">
+                <span id="intensityRotateValue">{{ intensity_rotate | default(1.0) }}</span>
                 <input type="hidden" id="intensityRotate" name="intensityRotate" value="1.0"><br><br>
 
                 <label for="speedRange">Speed:</label>
-                <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="1.0">
-                <span id="speedValue">1.0</span>
+                <input type="range" id="speedRange" name="speedRange" min="0.1" max="2.0" step="0.1" value="{{ speed | default(1.0) }}">
+                <span id="speedValue">{{ speed | default(1.0) }}</span>
                 <input type="hidden" id="speed" name="speed" value="1.0"><br><br>
 
                 <input type="submit" value="生成動畫">

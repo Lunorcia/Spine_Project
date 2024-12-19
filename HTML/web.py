@@ -29,10 +29,10 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://bbdd-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://bbdd-219-70-173-170.ngrok-free.app/mesh_process"
-LOCAL_SERVER_MAPPING = "https://bbdd-219-70-173-170.ngrok-free.app/mapping_process"
-LOCAL_SERVER_GAME = "https://bbdd-219-70-173-170.ngrok-free.app/game_url_process"
+LOCAL_SERVER_MAIN = "https://ced0-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://ced0-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://ced0-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_GAME = "https://ced0-219-70-173-170.ngrok-free.app/game_url_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -111,6 +111,7 @@ def save_template_mapping(mapping):
                 print("Mappings saved to local successfully")
             else:
                 print("Request failed.\n")
+
                 return jsonify({"Error": "Saving mappings failed."}), 500
     except Exception as e:
         return jsonify({"Error sending json file to local server": str(e)}), 500
@@ -125,7 +126,17 @@ def index():
     #             "static", filename=f"Image/PreviewGIF/{t_name}.gif"
     #         )
     return render_template(
-        "anim.html", image_web_url="", gif_web_url="", templates=mapping
+        "anim.html",
+        image_web_url="",
+        gif_web_url="",
+        templates=mapping,
+        selected_letter="A",
+        selected_template=None,
+        selected_type=None,
+        intensity_translate=1.0,
+        intensity_scale=1.0,
+        intensity_rotate=1.0,
+        speed=1.0,
     )
 
 
@@ -329,6 +340,7 @@ def upload():
     intensity_scale = float(request.form.get("intensityScale", 1.0))
     intensity_rotate = float(request.form.get("intensityRotate", 1.0))
     speed = float(request.form.get("speed", 1.0))
+
     # 將圖片保存到伺服器
     uploaded_image.save(os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename))
     img_url = f"/Image/Saved/{uploaded_image.filename}"  # /static written in html
@@ -387,12 +399,45 @@ def upload():
                     image_web_url=img_url,
                     gif_web_url=gif_url,
                     templates=mapping,
+                    selected_letter=request.form.get("letter"),
+                    selected_template=request.form.get("template"),
+                    selected_type=request.form.get("animationType"),
+                    intensity_translate=request.form.get("intensityTranslate", 1.0),
+                    intensity_scale=request.form.get("intensityScale", 1.0),
+                    intensity_rotate=request.form.get("intensityRotate", 1.0),
+                    speed=request.form.get("speed", 1.0),
                 )
             else:
                 print("Request failed.\n")
-                return jsonify({"error": "Failed to process image"}), 500
+                return render_template(
+                    "anim.html",
+                    error_message="Failed to process animation in Spine2D.",
+                    image_web_url=img_url,
+                    templates=mapping,
+                    selected_letter=request.form.get("letter"),
+                    selected_template=request.form.get("template"),
+                    selected_type=request.form.get("animationType"),
+                    intensity_translate=request.form.get("intensityTranslate", 1.0),
+                    intensity_scale=request.form.get("intensityScale", 1.0),
+                    intensity_rotate=request.form.get("intensityRotate", 1.0),
+                    speed=request.form.get("speed", 1.0),
+                )
+                # return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return render_template(
+            "anim.html",
+            error_message=f"Local server transmission error: {str(e)}",
+            image_web_url=img_url,
+            templates=mapping,
+            selected_letter=request.form.get("letter"),
+            selected_template=request.form.get("template"),
+            selected_type=request.form.get("animationType"),
+            intensity_translate=request.form.get("intensityTranslate", 1.0),
+            intensity_scale=request.form.get("intensityScale", 1.0),
+            intensity_rotate=request.form.get("intensityRotate", 1.0),
+            speed=request.form.get("speed", 1.0),
+        )
+        # return jsonify({"error": str(e)}), 500
 
 
 @app.route("/add_template", methods=["POST"])
@@ -616,6 +661,7 @@ def adjust_template():
     # 取得表單上傳的文件
     uploaded_image = request.files["image_file"]
     scale_factor = float(request.form.get("scale_factor", 2.0))
+
     if not uploaded_image or not uploaded_image:
         return "Please upload both JSON and image files then try again.", 400
 
@@ -631,8 +677,8 @@ def adjust_template():
         uploaded_json.save(saved_json_path)
 
     else:
-        selected_type = request.form["animationType"]
-        selected_template = request.form["template"]
+        selected_type = request.form.get("animationType", "")
+        selected_template = request.form.get("template", "")
         # choose template json
         type_dict = mapping.get(selected_type)
         template_data = type_dict.get(selected_template)
