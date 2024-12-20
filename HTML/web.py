@@ -314,9 +314,11 @@ def download_all_templates():
             )  # turn into abs path
 
             if os.path.exists(json_file_path):
-                shutil.copy(json_file_path, temp_dir)
+                if os.path.abspath(json_file_path) != os.path.abspath(temp_dir):
+                    shutil.copy(json_file_path, temp_dir)
             if os.path.exists(gif_full_path):
-                shutil.copy(gif_full_path, temp_dir)
+                if os.path.abspath(gif_full_path) != os.path.abspath(temp_dir):
+                    shutil.copy(gif_full_path, temp_dir)
     zip_filename = "mapping_file.zip"
     zip_path = os.path.join(SRC_PATH, "static", zip_filename)
     shutil.make_archive(zip_path.replace(".zip", ""), "zip", temp_dir)
@@ -544,7 +546,8 @@ def add_template():
         file_path = os.path.join(
             UPLOADED_JSON_FILE_FOLDER, os.path.basename(json_file_path)
         )
-        shutil.copy(json_file_path, file_path)
+        if os.path.abspath(json_file_path) != os.path.abspath(file_path):
+            shutil.copy(json_file_path, file_path)
 
         # generate preview gif
         preview_file_name = f"{new_template_name}.gif"
@@ -637,7 +640,8 @@ def save_json_template(
     if os.path.exists(gif_file_path):
         # copy gif from gif_path to preview_path
         print(f"copying gif from {gif_file_path} to {preview_file_path}")
-        shutil.copy(gif_file_path, preview_file_path)
+        if os.path.abspath(gif_file_path) != os.path.abspath(preview_file_path):
+            shutil.copy(gif_file_path, preview_file_path)
     else:
         print("gif file path doesn't exist.")
 
@@ -767,7 +771,8 @@ def adjust_template():
         saved_json_path = os.path.join(
             UPLOADED_JSON_FILE_FOLDER, os.path.basename(template_json_path)
         )
-        shutil.copy(template_json_path, saved_json_path)
+        if os.path.abspath(template_json_path) != os.path.abspath(saved_json_path):
+            shutil.copy(template_json_path, saved_json_path)
 
     # 將圖片檔案儲存到伺服器
     saved_img_path = os.path.join(UPLOAD_IMG_FOLDER, uploaded_image.filename)
