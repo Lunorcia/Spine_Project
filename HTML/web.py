@@ -29,10 +29,10 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://ced0-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://ced0-219-70-173-170.ngrok-free.app/mesh_process"
-LOCAL_SERVER_MAPPING = "https://ced0-219-70-173-170.ngrok-free.app/mapping_process"
-LOCAL_SERVER_GAME = "https://ced0-219-70-173-170.ngrok-free.app/game_url_process"
+LOCAL_SERVER_MAIN = "https://64ae-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://64ae-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://64ae-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_GAME = "https://64ae-219-70-173-170.ngrok-free.app/game_url_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -111,10 +111,15 @@ def save_template_mapping(mapping):
                 print("Mappings saved to local successfully")
             else:
                 print("Request failed.\n")
-
-                return jsonify({"Error": "Saving mappings failed."}), 500
+                error_message = f"Saving mappings failed."
+                return error_message
+                # return jsonify({"Error": "Saving mappings failed."}), 500
     except Exception as e:
-        return jsonify({"Error sending json file to local server": str(e)}), 500
+        error_message = f"Error occurred during transmission (sending json file to local server).\n Exception message: {str(e)}"
+        return error_message
+        # return jsonify({"Error sending json file to local server": str(e)}), 500
+
+    return None  # no error msg
 
 
 @app.route("/")
@@ -460,8 +465,11 @@ def add_template():
         preview_file_path = os.path.join(
             SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
         )
+        error_message = None
         # connect local server
-        generate_preview_gif(file_path, preview_file_path)
+        check_error_message1 = generate_preview_gif(file_path, preview_file_path)
+        if check_error_message1 is not None:
+            error_message = check_error_message1 + "\n"
 
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
@@ -476,19 +484,50 @@ def add_template():
         else:
             mapping[animation_type] = {new_template_name: new_template_data}
 
-        save_template_mapping(mapping)
+        check_error_message2 = save_template_mapping(mapping)
+        if check_error_message2 is not None:
+            if error_message is not None:  # if generate_preview_gif() return err msg
+                error_message += check_error_message2
+            else:
+                error_message = check_error_message2
 
-        return redirect(url_for("index"))
+        # no error msg
+        if error_message is None:
+            error_message = "Adding new template completed."
+
+        return render_template(
+            "anim.html",
+            image_web_url="",
+            gif_web_url="",
+            templates=mapping,
+            error_message=error_message,
+        )
+        # return redirect(url_for("index"))
 
     # only json_path (send from fetch_game page)
     elif json_file_path:
+        mapping = load_template_mapping()
         print(f"json_file_path at: {json_file_path}\n")
         if not os.path.exists(json_file_path):
             print("Json path error.\n")
-            return "Json file path doesn't exist.", 400
+            return render_template(
+                "add_template.html",
+                templates=mapping,
+                json_path=None,
+                gif_path=None,
+                error_message="Error occurred while fetching json file path.",
+            )
+            # return "Json file path doesn't exist.", 400
         if not json_file_path.endswith(".json"):
             print("Json end format error.\n")
-            return "Invalid file type. Please upload a .json file.", 400
+            return render_template(
+                "add_template.html",
+                templates=mapping,
+                json_path=None,
+                gif_path=None,
+                error_message="Invalid file type. Please upload a .json file.",
+            )
+            # return "Invalid file type. Please upload a .json file.", 400
 
         # Save the uploaded template file
         if not os.path.exists(UPLOADED_JSON_FILE_FOLDER):
@@ -503,8 +542,11 @@ def add_template():
         preview_file_path = os.path.join(
             SRC_PATH, "static", "Image", "PreviewGIF", preview_file_name
         )
+        error_message = None
         # connect local server
-        generate_preview_gif(file_path, preview_file_path)
+        check_error_message1 = generate_preview_gif(file_path, preview_file_path)
+        if check_error_message1 is not None:
+            error_message = check_error_message1 + "\n"
 
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
@@ -519,12 +561,36 @@ def add_template():
         else:
             mapping[animation_type] = {new_template_name: new_template_data}
 
-        save_template_mapping(mapping)
+        check_error_message2 = save_template_mapping(mapping)
+        if check_error_message2 is not None:
+            if error_message is not None:  # if generate_preview_gif() return err msg
+                error_message += check_error_message2
+            else:
+                error_message = check_error_message2
 
-        return redirect(url_for("index"))
+        # no error msg
+        if error_message is None:
+            error_message = "Adding new template completed."
+
+        return render_template(
+            "anim.html",
+            image_web_url="",
+            gif_web_url="",
+            templates=mapping,
+            error_message=error_message,
+        )
+        # return redirect(url_for("index"))
 
     else:
-        return "Invalid file type. Please upload a .json file.", 400
+        error_message = "Invalid file type. Please upload a .json file."
+        return render_template(
+            "add_template.html",
+            templates=mapping,
+            json_path=None,
+            gif_path=None,
+            error_message=None,
+        )
+        # return "Invalid file type. Please upload a .json file.", 400
 
 
 # if doesn't need to generate gif, call this function
@@ -569,9 +635,19 @@ def save_json_template(
     else:
         mapping[animation_type] = {new_template_name: new_template_data}
 
-    save_template_mapping(mapping)
+    error_message = save_template_mapping(mapping)
+    # no error msg
+    if error_message is None:
+        error_message = "Adding new template completed."
 
-    return redirect(url_for("index"))
+    return render_template(
+        "anim.html",
+        image_web_url="",
+        gif_web_url="",
+        templates=mapping,
+        error_message=error_message,
+    )
+    # return redirect(url_for("index"))
 
 
 def generate_preview_gif(json_file_path, preview_gif_path):
@@ -611,12 +687,18 @@ def generate_preview_gif(json_file_path, preview_gif_path):
                 output_gif_path = preview_gif_path
                 with open(output_gif_path, "wb") as gif_file:
                     gif_file.write(response.content)
-                return
+                return None
             else:
                 print("Request failed.\n")
-                return jsonify({"error": "Failed to process image"}), 500
+                error_message = "Request failed during generating preview GIF."
+                return error_message
+                # return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        error_message = (
+            f"Request failed during generating preview GIF. Exception message: {str(e)}"
+        )
+        return error_message
+        # return jsonify({"error": str(e)}), 500
 
     # animate.py改圖片路徑(用As.png)
     # 連線local server，傳模板json檔案和As.png給server

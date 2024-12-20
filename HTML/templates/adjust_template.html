@@ -101,6 +101,11 @@
     </a>
 
     <h1 style="margin-top:40px;">調整模板網格</h1>
+    {% if error_message %}
+        <script>
+            alert("{{ error_message }}");
+        </script>
+    {% endif %}
     <div class="container">
         <div class="form-container">
             <form action="/adjust_template" method="post" enctype="multipart/form-data">

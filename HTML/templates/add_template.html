@@ -147,6 +147,11 @@
     </a>
 
     <h1 style="margin-top:40px;">新增模板</h1>
+    {% if error_message %}
+        <script>
+            alert("{{ error_message }}");
+        </script>
+    {% endif %}
     <div class="container">
         <div class="form-container">
             <form id="addTemplateForm" action="/add_template" method="post" enctype="multipart/form-data">
