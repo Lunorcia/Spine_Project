@@ -470,6 +470,7 @@ def add_template():
         check_error_message1 = generate_preview_gif(file_path, preview_file_path)
         if check_error_message1 is not None:
             error_message = check_error_message1 + "\n"
+            print(f"got err msg at generate gif check, err_msg: {error_message}")
 
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
@@ -490,6 +491,9 @@ def add_template():
                 error_message += check_error_message2
             else:
                 error_message = check_error_message2
+            print(
+                f"got err msg at save_template_mapping check, err_msg: {error_message}"
+            )
 
         # no error msg
         if error_message is None:
@@ -547,6 +551,7 @@ def add_template():
         check_error_message1 = generate_preview_gif(file_path, preview_file_path)
         if check_error_message1 is not None:
             error_message = check_error_message1 + "\n"
+            print(f"got err msg at generate gif check, err_msg: {error_message}")
 
         # Update the TEMPLATE_MAPPING
         mapping = load_template_mapping()
@@ -567,6 +572,9 @@ def add_template():
                 error_message += check_error_message2
             else:
                 error_message = check_error_message2
+            print(
+                f"got err msg at save_template_mapping check, err_msg: {error_message}"
+            )
 
         # no error msg
         if error_message is None:
@@ -588,7 +596,7 @@ def add_template():
             templates=mapping,
             json_path=None,
             gif_path=None,
-            error_message=None,
+            error_message=error_message,
         )
         # return "Invalid file type. Please upload a .json file.", 400
 
