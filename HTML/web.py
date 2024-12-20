@@ -500,6 +500,9 @@ def add_template():
         if error_message is None:
             error_message = "Adding new template completed."
 
+        if error_message is not None:
+            error_message = error_message.strip()
+
         print(f"before return, err_msg: {error_message}")
         return render_template(
             "anim.html",
@@ -582,6 +585,9 @@ def add_template():
         if error_message is None:
             error_message = "Adding new template completed."
 
+        if error_message is not None:
+            error_message = error_message.strip()
+
         print(f"before return, err_msg: {error_message}")
         return render_template(
             "anim.html",
@@ -654,6 +660,9 @@ def save_json_template(
     print(
         f"at save_json_template(if don't generate gif) before return, err_msg: {error_message}"
     )
+    if error_message is not None:
+        error_message = error_message.strip()
+
     return render_template(
         "anim.html",
         image_web_url="",
