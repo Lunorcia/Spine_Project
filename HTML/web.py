@@ -495,10 +495,12 @@ def add_template():
                 f"got err msg at save_template_mapping check, err_msg: {error_message}"
             )
 
+        print(f"after check 2, err_msg: {error_message}")
         # no error msg
         if error_message is None:
             error_message = "Adding new template completed."
 
+        print(f"before return, err_msg: {error_message}")
         return render_template(
             "anim.html",
             image_web_url="",
@@ -575,11 +577,12 @@ def add_template():
             print(
                 f"got err msg at save_template_mapping check, err_msg: {error_message}"
             )
-
+        print(f"after check 2, err_msg: {error_message}")
         # no error msg
         if error_message is None:
             error_message = "Adding new template completed."
 
+        print(f"before return, err_msg: {error_message}")
         return render_template(
             "anim.html",
             image_web_url="",
@@ -648,6 +651,9 @@ def save_json_template(
     if error_message is None:
         error_message = "Adding new template completed."
 
+    print(
+        f"at save_json_template(if don't generate gif) before return, err_msg: {error_message}"
+    )
     return render_template(
         "anim.html",
         image_web_url="",
