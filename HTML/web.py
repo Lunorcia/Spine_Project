@@ -29,10 +29,10 @@ sys.path.append(str(PYTHON_FILE_FOLDER))
 import pythonFile.animate as animate
 import pythonFile.enlarge_mesh as enlargeMesh
 
-LOCAL_SERVER_MAIN = "https://64ae-219-70-173-170.ngrok-free.app/main_process"
-LOCAL_SERVER_MESH = "https://64ae-219-70-173-170.ngrok-free.app/mesh_process"
-LOCAL_SERVER_MAPPING = "https://64ae-219-70-173-170.ngrok-free.app/mapping_process"
-LOCAL_SERVER_GAME = "https://64ae-219-70-173-170.ngrok-free.app/game_url_process"
+LOCAL_SERVER_MAIN = "https://8962-219-70-173-170.ngrok-free.app/main_process"
+LOCAL_SERVER_MESH = "https://8962-219-70-173-170.ngrok-free.app/mesh_process"
+LOCAL_SERVER_MAPPING = "https://8962-219-70-173-170.ngrok-free.app/mapping_process"
+LOCAL_SERVER_GAME = "https://8962-219-70-173-170.ngrok-free.app/game_url_process"
 
 # src = (absolute path)\HTML
 # location of img file which user upload
@@ -741,7 +741,17 @@ def adjust_template():
     scale_factor = float(request.form.get("scale_factor", 2.0))
 
     if not uploaded_image or not uploaded_image:
-        return "Please upload both JSON and image files then try again.", 400
+        return render_template(
+            "adjust_template.html",
+            gif_web_url=None,
+            json_download_link=None,
+            img_download_link=None,
+            json_file_path=None,
+            gif_file_path=None,
+            templates=mapping,
+            error_message="Please upload both JSON and image files then try again.",
+        )
+        # return "Please upload both JSON and image files then try again.", 400
 
     # 選擇既有模板或使用者自行上傳模板
     use_existing_template = request.form.get("existingTemplateCheckbox") == "on"
@@ -826,9 +836,29 @@ def adjust_template():
                 )
             else:
                 print("Request failed.\n")
-                return jsonify({"error": "Failed to process image"}), 500
+                return render_template(
+                    "adjust_template.html",
+                    gif_web_url=None,
+                    json_download_link=None,
+                    img_download_link=None,
+                    json_file_path=None,
+                    gif_file_path=None,
+                    templates=mapping,
+                    error_message="Failed to process animation in Spine2D.",
+                )
+                # return jsonify({"error": "Failed to process image"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return render_template(
+            "adjust_template.html",
+            gif_web_url=None,
+            json_download_link=None,
+            img_download_link=None,
+            json_file_path=None,
+            gif_file_path=None,
+            templates=mapping,
+            error_message=f"Local server transmission error: {str(e)}",
+        )
+        # return jsonify({"error": str(e)}), 500
 
 
 @app.route("/download/<folder>/<filename>")
