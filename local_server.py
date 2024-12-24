@@ -646,6 +646,10 @@ def GenerateGIF(output_gif_path):
                         pyautogui.click(gif_button_location)
                         pyautogui.click(gif_button_location)
                         time.sleep(0.5)
+                        pyautogui.moveTo(
+                            gif_button_location.x - 50, gif_button_location.y
+                        )
+                        print("click and move complete.")
                     else:
                         print("GIF radio button not found, trying alternate image.")
                 except Exception as e:
@@ -663,6 +667,10 @@ def GenerateGIF(output_gif_path):
                             pyautogui.click(gif_button_location)
                             pyautogui.click(gif_button_location)
                             time.sleep(0.5)
+                            pyautogui.moveTo(
+                                gif_button_location.x - 50, gif_button_location.y
+                            )
+                            print("click and move complete.")
                         else:
                             print("Alternate GIF radio button not found.")
                             raise Exception("GIF radio button not found")
